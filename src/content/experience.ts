@@ -36,4 +36,18 @@ export const experience = [
       },
     ],
   },
+  {
+    id: "tachvision",
+    name: "Tachvision Technology",
+    location: "Bareilly, Uttar Pradesh",
+    roles: [
+      {
+        title: "Full Stack Developer Intern",
+        period: { start: "2024-06", end: "2024-09" },
+        summary:
+          "Built Groceries, a MERN grocery delivery web app: Razorpay checkout, cart management, and an admin panel for managing the grocery catalogue and orders.",
+        productSlugs: ["groceries"],
+      },
+    ],
+  },
 ] as const satisfies readonly Company[];

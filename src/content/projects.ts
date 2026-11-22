@@ -377,6 +377,36 @@ export const projects = [
     },
     media: {},
   },
+  {
+    slug: "groceries",
+    title: "Groceries",
+    tagline: "MERN grocery delivery app with Razorpay checkout, cart and an admin panel.",
+    summary:
+      "A grocery delivery web app built during my internship at Tachvision Technology, on the MERN stack: shoppers browse and fill a cart, then pay through Razorpay; staff manage products, stock and orders from a separate admin panel.",
+    kind: "web",
+    lens: ["product"],
+    status: "internal",
+    company: "tachvision",
+    period: { start: "2024-06", end: "2024-09" },
+    role: "Full Stack Developer Intern",
+    stack: ["React", "Node.js", "Express.js", "MongoDB", "Razorpay"],
+    highlights: [
+      {
+        title: "Razorpay checkout",
+        body: "Integrated Razorpay so customers can pay for their orders securely at checkout.",
+      },
+      {
+        title: "Cart management",
+        body: "Add, update and remove items with a cart that stays in sync through to checkout.",
+      },
+      {
+        title: "Admin panel",
+        body: "A dedicated admin panel for managing the grocery catalogue and incoming orders.",
+      },
+    ],
+    links: {},
+    media: {},
+  },
 ] as const satisfies readonly Project[];
 
 /** College-era projects (from the previous portfolio), shown in the compact archive list. */

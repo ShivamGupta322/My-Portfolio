@@ -479,3 +479,12 @@ html.intro-pending [data-intro] {
 html.intro-pending [data-hero-portrait] {
   transform: translateY(24px) scale(0.97);
 }
+
+/* ---------- Lens highlighting ----------
+   Containers set data-current-lens (from useLens); items opt in with
+   data-lens-product / data-lens-systems. Used by the Experience timeline chips. */
+[data-current-lens="product"] .lens-chip[data-lens-product],
+[data-current-lens="systems"] .lens-chip[data-lens-systems] {
+  border-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
+  background-color: color-mix(in srgb, var(--c-accent) 8%, transparent);
+}

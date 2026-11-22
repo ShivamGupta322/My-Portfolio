@@ -97,6 +97,33 @@ export function formatPeriod(period: Period): string {
   return `${formatYearMonth(period.start)} – ${period.end ? formatYearMonth(period.end) : "Present"}`;
 }
 
+/**
+ * Inclusive length of a finished period: Jan–Jun = "6 mos", Jun 2024–Sep 2024 = "4 mos".
+ * Ongoing roles return null (a build-time "x yrs" would go stale), so the UI shows "Present".
+ */
+export function formatDuration(period: Period): string | null {
+  if (!period.end) return null;
+  const [sy, sm] = period.start.split("-").map(Number);
+  const [ey, em] = period.end.split("-").map(Number);
+  const months = (ey - sy) * 12 + (em - sm) + 1;
+  const years = Math.floor(months / 12);
+  const rest = months % 12;
+  const parts = [
+    years ? `${years} yr${years > 1 ? "s" : ""}` : "",
+    rest ? `${rest} mo${rest > 1 ? "s" : ""}` : "",
+  ];
+  return parts.filter(Boolean).join(" ");
+}
+
+/**
+ * Anchor a project link should scroll to. Until the per-project stages land
+ * (Phase 6) everything points at the Work section.
+ */
+export function projectAnchorId(slug: string): string {
+  void slug;
+  return "work";
+}
+
 /* ---------- Skills ---------- */
 
 export function getSkillGroups(lens: Lens): (SkillGroup & { highlighted: boolean })[] {

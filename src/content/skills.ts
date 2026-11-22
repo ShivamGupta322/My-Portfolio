@@ -123,6 +123,7 @@ export const skillGroups = [
       { name: "Outlook Calendar" },
       { name: "SendGrid" },
       { name: "Meta Ads SDK", icon: "meta" },
+      { name: "Razorpay", icon: "razorpay" },
       { name: "Zapier", icon: "zapier" },
     ],
   },

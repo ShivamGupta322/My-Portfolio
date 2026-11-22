@@ -1,24 +1,19 @@
 import { Reveal } from "@/components/motion/Reveal";
 import { About } from "@/components/sections/About";
+import { Experience } from "@/components/sections/Experience";
 import { Hero } from "@/components/sections/Hero";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { navSections } from "@/content/site";
 
 /**
- * Home. Hero + About are real (Phase 4); the remaining sections are placeholders
- * replaced in Phases 5–8. Section numbers follow navSections order.
+ * Home. Hero, About (Phase 4) and Experience (Phase 5) are real; the remaining
+ * sections are placeholders replaced in Phases 6–8. Section numbers follow navSections order.
  */
 const placeholders: Record<
   string,
   { title: string; highlight: string; intro: string; phase: string }
 > = {
-  experience: {
-    title: "Where I've shipped",
-    highlight: "shipped",
-    intro: "Scroll-drawn timeline: Scramble Apps (2025 – now) and Shivsys (2025).",
-    phase: "Phase 5",
-  },
   work: {
     title: "Selected work",
     highlight: "work",
@@ -47,6 +42,7 @@ export default function Home() {
     <>
       <Hero />
       <About index={indexOf("about")} />
+      <Experience index={indexOf("experience")} />
 
       {navSections
         .filter((section) => section.id in placeholders)

@@ -18,7 +18,7 @@ export type ProjectKind = "mobile" | "web" | "hybrid" | "backend";
  */
 export type ProjectStatus = "live" | "shipped" | "internal" | "in-progress";
 
-export type CompanyId = "scramble-apps" | "shivsys";
+export type CompanyId = "scramble-apps" | "shivsys" | "tachvision";
 
 /** ISO year-month, e.g. "2025-06". */
 export type YearMonth = `${number}-${number}`;

@@ -161,6 +161,7 @@ export interface Project {
 | `fitexgo` | mobile | product | Play `com.fitexgo` · App Store `id6446050793` |
 | `order-processing-system` | backend | systems | (private, diagram + metrics) |
 | `voip-telephony` | backend | systems | (private, diagram) |
+| `groceries` | web | product | (internship project, no public link) |
 | `nearby` | backend (web client) | systems, product | in progress |
 | `molbhaav` | mobile | product | Play `com.molbhaav` · github.com/ShivamGupta322/MolBhaav |
 | `social-media-post-scheduler` | web | product | social-media-post-scheduler-eta.vercel.app · GitHub |
@@ -270,7 +271,7 @@ NEXT_PUBLIC_SITE_URL=https://www.devshivam.online
 | **2. Layout shell** ✅ | SmoothScrollProvider, Nav, MobileMenu, SectionLink, ScrollProgress, Cursor, Footer, Preloader, Reveal; `(site)` route group | Anchor nav works (nav clearance via `scroll-padding-top`), reduced-motion paths in place |
 | **3. Content** ✅ | `src/types/content.ts`, `src/content/*` from both resumes, `src/lib/content.ts` read API, `scripts/check-content.mts` | `tsc` + `npm run check:links` pass (LinkedIn/LeetCode block bots: verified by hand) |
 | **4. Hero + About** ✅ | Aurora/AuroraCanvas (OGL), Hero (parallax, intro, role rotator), LensToggle + `useLens` store, About bento (ScrubWords, CountUp, TiltCard, Magnetic) | LCP measured on the production build: desktop 0.3–1.4 s, mobile 1.6–2.0 s, CLS 0 |
-| **5. Experience** | Timeline with scroll-drawn line | Works on desktop and mobile |
+| **5. Experience** ✅ | Server-rendered `Experience` + client `TimelineMotion`: scroll-drawn rail (scaleY scrub) with glowing head, node pops, alternating card slides, lens-highlighted product chips; Tachvision internship + Groceries added to content | Works on desktop (alternating) and mobile (left rail) |
 | **6. Showcase** | PhoneMockup, BrowserMockup, TerminalPanel, SystemDiagram and the 4 stages, FeaturedProjects, ProjectGrid, Archive | Each `kind` renders with real assets, and lens reorder animates |
 | **7. Case studies** | `/projects/[slug]` + MDX + OG images | All featured projects have pages, and previews render on share |
 | **8. Skills, Achievements, Contact** | Velocity marquee, Resend action | Test email received, errors handled |

@@ -5,7 +5,7 @@
 
 **Live:** [devshivam.online](https://www.devshivam.online) &nbsp;·&nbsp; [GitHub](https://github.com/ShivamGupta322) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/shivam-gupta-sg322/) &nbsp;·&nbsp; [LeetCode](https://leetcode.com/u/Shivam_Gupta322/) &nbsp;·&nbsp; [GeeksforGeeks](https://www.geeksforgeeks.org/user/guptashivamsg02/)
 
-> **Status:** Phase 4 done (Hero with WebGL aurora, parallax and the Product/Systems lens; About bento). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
+> **Status:** Phase 5 done (scroll-drawn Experience timeline across three roles). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
 
 ---
 
@@ -28,6 +28,7 @@
 | **Fitizen** | Fitness social app and website: real-time chat, deep links, reels | React Native, Vue.js, WebSockets, SQLite, FCM | [Play](https://play.google.com/store/apps/details?id=com.FitNation) · [App Store](https://apps.apple.com/in/app/fitizen-your-fitness-profile/id6449091598) · [Web](https://fitnation.com) |
 | **Vela Meet** | Video conferencing and scheduling. Backend built from scratch. | React, Node.js, PostgreSQL, Redis, Jitsi, AWS | [velaconference.com](https://velaconference.com) |
 | **Wingtrill** | Personal and workspace chat on mobile, web and desktop | React Native, Next.js, Electron, Erlang, MongooseIM | [wingtrill.com](https://wingtrill.com) |
+| **Groceries** *(internship)* | MERN grocery delivery app: Razorpay checkout, cart, admin panel | React, Node.js, Express, MongoDB, Razorpay | — |
 | **FitExGo** | Fitness and nutrition app with 10K+ downloads | React Native, Node.js | [Play](https://play.google.com/store/apps/details?id=com.fitexgo) · [App Store](https://apps.apple.com/in/app/fitexgo-fitness-lifestyle/id6446050793) |
 | **Order Processing System** | Event-driven, fault-tolerant backend: ~110 orders/s, 84% coverage | Erlang/OTP, Kafka, PostgreSQL, Mnesia, Prometheus | diagram + metrics |
 | **VoIP & Telephony** | Call-flow and routing on a distributed VoIP platform | Erlang, Kazoo, FreeSWITCH, SIP | diagram |
@@ -138,7 +139,7 @@ TypeScript fails the build if a required field is missing, and `npm run check:co
 - [x] **2. Layout shell:** smooth scroll, nav, cursor, progress, preloader, footer
 - [x] **3. Content:** typed data from both resumes, plus an integrity and link checker
 - [x] **4. Hero + About:** aurora shader, lens toggle, parallax hero, stats bento
-- [ ] **5. Experience timeline**
+- [x] **5. Experience timeline** (Scramble Apps · Shivsys · Tachvision internship)
 - [ ] **6. Showcase stages:** phone, browser, device duo, system diagram, plus grid and archive
 - [ ] **7. Case-study pages** + OG images
 - [ ] **8. Skills, achievements, contact** (Resend)
