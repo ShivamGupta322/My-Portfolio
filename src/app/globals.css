@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 /* ==========================================================================
    Midnight Aurora: design tokens
@@ -178,6 +179,16 @@
   --animate-pulse-dot: pulse-dot 1.8s var(--ease-out-quart) infinite;
   --animate-aurora-drift: aurora-drift 18s ease-in-out infinite alternate;
   --animate-caret: caret 1s steps(1) infinite;
+  --animate-marquee: marquee 40s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
 
   @keyframes pulse-dot {
     0% {
@@ -402,5 +413,18 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Preloader ----------
+   Server-rendered so it covers the first paint; hidden before paint on repeat
+   visits (head script sets html[data-preloaded]), for reduced motion, and
+   without JS (see <noscript> in (site)/layout.tsx). */
+html[data-preloaded] .preloader {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .preloader {
+    display: none;
   }
 }

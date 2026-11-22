@@ -11,6 +11,7 @@ export function SectionHeading({
   highlight,
   intro,
   as: Tag = "h2",
+  id,
   className,
 }: {
   index?: string;
@@ -19,6 +20,8 @@ export function SectionHeading({
   highlight?: string;
   intro?: string;
   as?: "h1" | "h2";
+  /** id for the heading element (target of a section's aria-labelledby) */
+  id?: string;
   className?: string;
 }) {
   const parts = highlight ? title.split(highlight) : [title];
@@ -28,7 +31,7 @@ export function SectionHeading({
         {index && <span className="text-primary-text">{index} / </span>}
         {eyebrow}
       </p>
-      <Tag className={Tag === "h1" ? "text-h1" : "text-h2"}>
+      <Tag id={id} className={Tag === "h1" ? "text-h1" : "text-h2"}>
         {highlight && parts.length > 1 ? (
           <>
             {parts[0]}

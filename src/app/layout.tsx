@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, JetBrains_Mono, Space_Grotesk } from "next/font/google";
-import { DEFAULT_THEME, themeInitScript } from "@/lib/theme";
+import { Cursor } from "@/components/layout/Cursor";
+import { headInitScript } from "@/lib/initScript";
+import { DEFAULT_THEME } from "@/lib/theme";
+import { SmoothScrollProvider } from "@/providers/SmoothScrollProvider";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -59,8 +62,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${spaceGrotesk.variable} ${dmSans.variable} ${jetbrainsMono.variable} h-full`}
     >
       <head>
-        {/* Applies the saved theme before first paint (no flash). */}
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Before first paint: saved theme + repeat-visit flag (no flash). */}
+        <script dangerouslySetInnerHTML={{ __html: headInitScript }} />
       </head>
       <body className="flex min-h-full flex-col bg-bg text-fg">
         <a
@@ -69,7 +72,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
-        {children}
+        <SmoothScrollProvider>
+          {children}
+          <Cursor />
+        </SmoothScrollProvider>
         <div aria-hidden className="noise-overlay" />
       </body>
     </html>

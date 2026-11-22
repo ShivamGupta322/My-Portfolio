@@ -265,7 +265,7 @@ NEXT_PUBLIC_SITE_URL=https://www.devshivam.online
 |---|---|---|
 | **0. Docs** (this step) | README, ARCHITECTURE, DESIGN_SYSTEM, MOTION_AND_SHOWCASE, MASTER.md | Reviewed and approved |
 | **1. Scaffold** ✅ | `create-next-app` (TS, Tailwind, App Router, src dir, Cache Components), `globals.css` tokens, fonts, theme script + `ThemeToggle`, UI primitives, `/design-system` page, ESLint/Prettier | `npm run dev` shows the token page in dark and light |
-| **2. Layout shell** | SmoothScrollProvider, Nav, MobileMenu, ScrollProgress, Cursor, Footer, Preloader | Anchor nav works, the reduced-motion path is verified |
+| **2. Layout shell** ✅ | SmoothScrollProvider, Nav, MobileMenu, SectionLink, ScrollProgress, Cursor, Footer, Preloader, Reveal; `(site)` route group | Anchor nav works (nav clearance via `scroll-padding-top`), reduced-motion paths in place |
 | **3. Content** | `src/content/*` and types filled from the resumes | `tsc` passes, every link resolves |
 | **4. Hero + About** | AuroraCanvas, SplitReveal, LensToggle, stats bento | LCP < 2.5s locally (Lighthouse) |
 | **5. Experience** | Timeline with scroll-drawn line | Works on desktop and mobile |

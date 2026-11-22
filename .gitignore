@@ -40,3 +40,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python caches (ui-ux-pro-max skill scripts)
+__pycache__/
+*.py[cod]
+
+# local-only Claude / editor settings
+.claude/settings.local.json
+.vscode/
+.idea/
+
+# test artifacts
+/test-results/
+/playwright-report/
+/coverage/

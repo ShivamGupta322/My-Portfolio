@@ -5,7 +5,7 @@
 
 **Live:** [devshivam.online](https://www.devshivam.online) &nbsp;·&nbsp; [GitHub](https://github.com/ShivamGupta322) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/shivam-gupta-sg322/) &nbsp;·&nbsp; [LeetCode](https://leetcode.com/u/Shivam_Gupta322/) &nbsp;·&nbsp; [GeeksforGeeks](https://www.geeksforgeeks.org/user/guptashivamsg02/)
 
-> **Status:** Phase 1 done (scaffold and design tokens). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
+> **Status:** Phase 2 done (layout shell: smooth scroll, nav, preloader, footer). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
 
 ---
 
@@ -133,7 +133,7 @@ TypeScript fails the build if a required field or link is missing.
 
 - [x] **0. Docs:** README, architecture, design system, motion and showcase playbook
 - [x] **1. Scaffold:** Next.js + Tailwind v4 tokens + fonts + theme (see `/design-system`)
-- [ ] **2. Layout shell:** smooth scroll, nav, cursor, progress, preloader, footer
+- [x] **2. Layout shell:** smooth scroll, nav, cursor, progress, preloader, footer
 - [ ] **3. Content:** typed data from both resumes
 - [ ] **4. Hero + About:** aurora shader, split-text, lens toggle, stats bento
 - [ ] **5. Experience timeline**
