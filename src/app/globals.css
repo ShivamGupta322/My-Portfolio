@@ -1,0 +1,406 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Midnight Aurora: design tokens
+   Source of truth for colours, type, radius, shadows, motion.
+   Docs: docs/DESIGN_SYSTEM.md · docs/MOTION_AND_SHOWCASE.md
+   ========================================================================== */
+
+/* Theme variants driven by <html data-theme="dark|light"> (set before paint in layout.tsx) */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/* ---------- Raw, theme-dependent values ---------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --c-bg: #07070c;
+  --c-surface: #11121a;
+  --c-elevated: #1a1b26;
+  --c-glass: rgb(255 255 255 / 0.06);
+  --c-glass-strong: rgb(255 255 255 / 0.1);
+  --c-glass-border: rgb(255 255 255 / 0.1);
+  --c-fg: #f4f4f8;
+  --c-muted: #a1a1b5;
+  --c-primary: #8b5cf6;
+  --c-primary-strong: #7c3aed;
+  --c-primary-strong-hover: #6d28d9;
+  --c-primary-text: #a78bfa;
+  --c-accent: #22d3ee;
+  --c-success: #34d399;
+  --c-warning: #fbbf24;
+  --c-danger: #fb7185;
+  --c-on-badge: #07070c;
+
+  --c-neu-base: #11121a;
+  --c-neu-dark: #050508;
+  --c-neu-light: #1d1f2c;
+
+  --sh-card: 0 0 0 1px var(--c-glass-border), 0 12px 40px -12px rgb(0 0 0 / 0.7);
+  --sh-lift: 0 0 0 1px rgb(255 255 255 / 0.14), 0 24px 60px -16px rgb(0 0 0 / 0.8);
+  --sh-glow: 0 0 48px -12px rgb(139 92 246 / 0.55);
+  --sh-glow-cyan: 0 0 40px -14px rgb(34 211 238 / 0.5);
+
+  --aurora-strength: 1;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --c-bg: #f7f7fb;
+  --c-surface: #ffffff;
+  --c-elevated: #eef0f6;
+  --c-glass: rgb(255 255 255 / 0.8);
+  --c-glass-strong: rgb(255 255 255 / 0.92);
+  --c-glass-border: #e2e8f0;
+  --c-fg: #0f172a;
+  --c-muted: #475569;
+  --c-primary: #7c3aed;
+  --c-primary-strong: #7c3aed;
+  --c-primary-strong-hover: #6d28d9;
+  --c-primary-text: #6d28d9;
+  --c-accent: #0e7490;
+  --c-success: #047857;
+  --c-warning: #b45309;
+  --c-danger: #be123c;
+  --c-on-badge: #ffffff;
+
+  --c-neu-base: #eef0f6;
+  --c-neu-dark: #cfd3de;
+  --c-neu-light: #ffffff;
+
+  --sh-card: 0 0 0 1px var(--c-glass-border), 0 12px 40px -16px rgb(15 23 42 / 0.12);
+  --sh-lift: 0 0 0 1px #cbd5e1, 0 24px 60px -20px rgb(15 23 42 / 0.18);
+  --sh-glow: 0 0 48px -14px rgb(124 58 237 / 0.35);
+  --sh-glow-cyan: 0 0 40px -16px rgb(14 116 144 / 0.3);
+
+  --aurora-strength: 0.4;
+}
+
+/* ---------- Tailwind theme mapping ---------- */
+@theme inline {
+  /* colours → bg-bg, text-fg, text-muted, bg-surface, border-glass-border, text-primary-text … */
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-elevated: var(--c-elevated);
+  --color-glass: var(--c-glass);
+  --color-glass-strong: var(--c-glass-strong);
+  --color-glass-border: var(--c-glass-border);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-primary: var(--c-primary);
+  --color-primary-strong: var(--c-primary-strong);
+  --color-primary-strong-hover: var(--c-primary-strong-hover);
+  --color-primary-text: var(--c-primary-text);
+  --color-accent: var(--c-accent);
+  --color-success: var(--c-success);
+  --color-warning: var(--c-warning);
+  --color-danger: var(--c-danger);
+  --color-on-badge: var(--c-on-badge);
+  --color-on-brand: #07070c; /* text on --gradient-brand: ≥4.75:1 across violet→cyan */
+
+  /* fonts (variables injected by next/font in layout.tsx) */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* shadows */
+  --shadow-card: var(--sh-card);
+  --shadow-lift: var(--sh-lift);
+  --shadow-glow: var(--sh-glow);
+  --shadow-glow-cyan: var(--sh-glow-cyan);
+}
+
+@theme {
+  /* fluid type scale → text-display, text-h1 … text-label, text-metric */
+  --text-display: clamp(3rem, 7vw + 1rem, 7.5rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.04em;
+  --text-display--font-weight: 700;
+
+  --text-h1: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);
+  --text-h1--line-height: 1;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: clamp(2rem, 3vw + 1rem, 3.5rem);
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h2--font-weight: 600;
+
+  --text-h3: clamp(1.5rem, 1.2vw + 1rem, 2rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.01em;
+  --text-h3--font-weight: 600;
+
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.3;
+  --text-h4--font-weight: 600;
+
+  --text-lead: clamp(1.125rem, 0.5vw + 1rem, 1.375rem);
+  --text-lead--line-height: 1.6;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.16em;
+  --text-label--font-weight: 500;
+
+  --text-metric: clamp(2.5rem, 4vw + 1rem, 4.5rem);
+  --text-metric--line-height: 1;
+  --text-metric--letter-spacing: -0.02em;
+  --text-metric--font-weight: 600;
+
+  /* radius → rounded-sm … rounded-xl, rounded-phone */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-phone: 48px;
+
+  /* blur → backdrop-blur-glass-sm / glass / glass-lg */
+  --blur-glass-sm: 8px;
+  --blur-glass: 16px;
+  --blur-glass-lg: 24px;
+
+  /* motion → ease-out-expo, duration via --dur-* */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+
+  --animate-pulse-dot: pulse-dot 1.8s var(--ease-out-quart) infinite;
+  --animate-aurora-drift: aurora-drift 18s ease-in-out infinite alternate;
+  --animate-caret: caret 1s steps(1) infinite;
+
+  @keyframes pulse-dot {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-success) 60%, transparent);
+    }
+    70% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+  @keyframes aurora-drift {
+    0% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    100% {
+      transform: translate3d(4%, -3%, 0) scale(1.08);
+    }
+  }
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+/* Non-Tailwind tokens used by components & JS */
+:root {
+  --dur-instant: 150ms;
+  --dur-fast: 250ms;
+  --dur-base: 400ms;
+  --dur-slow: 700ms;
+  --dur-hero: 1200ms;
+
+  --nav-offset: 96px;
+  --gradient-brand: linear-gradient(135deg, #8b5cf6 0%, #22d3ee 100%);
+  --gradient-text: linear-gradient(90deg, #a78bfa 0%, #22d3ee 100%);
+  --gradient-border: linear-gradient(
+    135deg,
+    rgb(139 92 246 / 0.6),
+    rgb(34 211 238 / 0.2) 50%,
+    rgb(255 255 255 / 0.06)
+  );
+}
+[data-theme="light"] {
+  --gradient-text: linear-gradient(90deg, #6d28d9 0%, #0e7490 100%);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    background: var(--c-bg);
+    color: var(--c-fg);
+    scroll-padding-top: var(--nav-offset);
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--c-primary) 35%, transparent);
+    color: var(--c-fg);
+  }
+  :focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  a,
+  button,
+  [role="button"],
+  [role="switch"],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+}
+
+/* ---------- Surface utilities ---------- */
+@utility container-page {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 20px;
+  @media (width >= 48rem) {
+    padding-inline: 32px;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 48px;
+  }
+}
+
+@utility section-y {
+  padding-block: clamp(6rem, 12vw, 11rem);
+}
+
+@utility glass {
+  background: var(--c-glass);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid var(--c-glass-border);
+  box-shadow: var(--sh-card);
+  @supports not (backdrop-filter: blur(1px)) {
+    background: var(--c-surface);
+  }
+}
+
+@utility glass-strong {
+  background: var(--c-glass-strong);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid var(--c-glass-border);
+  @supports not (backdrop-filter: blur(1px)) {
+    background: var(--c-surface);
+  }
+}
+
+/* gradient hairline border (featured cards); pair with `relative` + a rounded-* */
+@utility glass-gradient {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-border);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* neumorphism: tactile controls ONLY (lens toggle, theme switch, filter chips) */
+@utility neu {
+  background: var(--c-neu-base);
+  box-shadow:
+    6px 6px 14px var(--c-neu-dark),
+    -6px -6px 14px var(--c-neu-light);
+}
+@utility neu-inset {
+  background: var(--c-neu-base);
+  box-shadow:
+    inset 4px 4px 10px var(--c-neu-dark),
+    inset -4px -4px 10px var(--c-neu-light);
+}
+
+@utility text-gradient {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-brand {
+  background-image: var(--gradient-brand);
+}
+
+/* static aurora, also the fallback for the WebGL hero shader */
+@utility bg-aurora {
+  background:
+    radial-gradient(
+      40% 50% at 20% 30%,
+      rgb(139 92 246 / calc(0.35 * var(--aurora-strength))),
+      transparent 70%
+    ),
+    radial-gradient(
+      35% 45% at 80% 20%,
+      rgb(34 211 238 / calc(0.25 * var(--aurora-strength))),
+      transparent 70%
+    ),
+    radial-gradient(
+      30% 40% at 60% 80%,
+      rgb(52 211 153 / calc(0.12 * var(--aurora-strength))),
+      transparent 70%
+    );
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--c-fg) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--c-fg) 5%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 100%);
+}
+
+/* 3% film grain over the whole page */
+@utility noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Reduced motion: kill non-essential motion globally ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
