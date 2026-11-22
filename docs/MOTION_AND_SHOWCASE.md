@@ -60,7 +60,7 @@ These live in `src/lib/motion.ts` (exported for both GSAP and Motion) and mirror
 
 | Element | Behaviour | Reduced motion |
 |---|---|---|
-| **Preloader** | Under 1.2s. A mono counter runs 0→100 while "SHIVAM GUPTA" reveals by character, then a curtain wipes up (`power4.inOut`) into the hero. Skipped on repeat visits (`sessionStorage`). | Skipped entirely |
+| **Preloader** | ~1.35 s. A mono counter runs 0→100 while "SHIVAM GUPTA" reveals by character, then a curtain wipes up (`power4.inOut`). The hero intro starts as the curtain *begins* lifting (`intro:ready` event, `lib/intro.ts`). Skipped on repeat visits (`sessionStorage`). | Skipped entirely |
 | **Floating nav** | Glass pill `top-4 inset-x-4`. It hides on scroll-down, shows on scroll-up, and condenses (more blur and fill) after 80px. The active-section indicator is a Motion `layoutId` pill. | Always visible, no slide |
 | **Scroll progress** | 2px brand-gradient bar under the nav, `scaleX` bound to page progress | Kept (not motion-heavy) |
 | **Custom cursor** | Desktop and `pointer:fine` only; replaces the native cursor (`html.custom-cursor`). A brand-gradient dot tracks the pointer 1:1 while a ring trails on a spring. Over interactive elements the ring grows with a cyan glow and the dot hides; `data-cursor="View"`/`"Drag"` turns it into a filled labelled pill; `data-cursor="hide"` hides it; pressing squeezes the ring; text fields get the native I-beam. | Disabled (native cursor) |
@@ -84,6 +84,10 @@ These live in `src/lib/motion.ts` (exported for both GSAP and Motion) and mirror
 | 8 | **Contact + footer** | The form fields stagger. A giant outlined "LET'S BUILD SOMETHING" marquee runs in the footer. | Footer reveal: the page content lifts to uncover a fixed footer (`clip-path` / translate) | Field focus glow, submit button morph (idle → spinner → ✓), success toast | Same, minus the footer uncover |
 
 ---
+
+### LCP rule for intros
+
+Hero copy is hidden before first paint by `html.intro-pending` (`[data-intro]` → `visibility: hidden`) so it never flashes and then re-animates. The **LCP element must never be opacity-gated**: the portrait (desktop and mobile LCP) only settles from a small transform offset that CSS applies pre-paint and GSAP matches. A 4 s safety timeout in the head script reveals everything if JS fails.
 
 ## 6. Project showcase system
 

@@ -5,7 +5,7 @@
 
 **Live:** [devshivam.online](https://www.devshivam.online) &nbsp;·&nbsp; [GitHub](https://github.com/ShivamGupta322) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/shivam-gupta-sg322/) &nbsp;·&nbsp; [LeetCode](https://leetcode.com/u/Shivam_Gupta322/) &nbsp;·&nbsp; [GeeksforGeeks](https://www.geeksforgeeks.org/user/guptashivamsg02/)
 
-> **Status:** Phase 3 done (typed content from both resumes, with an integrity and link checker). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
+> **Status:** Phase 4 done (Hero with WebGL aurora, parallax and the Product/Systems lens; About bento). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
 
 ---
 
@@ -137,7 +137,7 @@ TypeScript fails the build if a required field is missing, and `npm run check:co
 - [x] **1. Scaffold:** Next.js + Tailwind v4 tokens + fonts + theme (see `/design-system`)
 - [x] **2. Layout shell:** smooth scroll, nav, cursor, progress, preloader, footer
 - [x] **3. Content:** typed data from both resumes, plus an integrity and link checker
-- [ ] **4. Hero + About:** aurora shader, split-text, lens toggle, stats bento
+- [x] **4. Hero + About:** aurora shader, lens toggle, parallax hero, stats bento
 - [ ] **5. Experience timeline**
 - [ ] **6. Showcase stages:** phone, browser, device duo, system diagram, plus grid and archive
 - [ ] **7. Case-study pages** + OG images

@@ -22,8 +22,7 @@ import type {
  * raw content files, so ordering/lens rules live in one place.
  */
 
-export const LENSES: readonly Lens[] = ["product", "systems"];
-export const DEFAULT_LENS: Lens = "product";
+export { DEFAULT_LENS, isLens, LENSES } from "@/lib/lens";
 
 export type ProjectSlug = (typeof projects)[number]["slug"];
 
@@ -34,10 +33,6 @@ const allCompanies: readonly Company[] = experience;
 
 export { achievements, education, profile };
 export const archiveProjects: readonly ArchiveProject[] = archive;
-
-export function isLens(value: unknown): value is Lens {
-  return value === "product" || value === "systems";
-}
 
 /* ---------- Projects ---------- */
 

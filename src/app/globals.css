@@ -180,6 +180,27 @@
   --animate-aurora-drift: aurora-drift 18s ease-in-out infinite alternate;
   --animate-caret: caret 1s steps(1) infinite;
   --animate-marquee: marquee 40s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out -3s infinite;
+  --animate-scroll-cue: scroll-cue 2s var(--ease-in-out-quart) infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0);
+    }
+  }
+  @keyframes scroll-cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(200%);
+    }
+  }
 
   @keyframes marquee {
     from {
@@ -446,4 +467,15 @@ html.custom-cursor
 }
 html.custom-cursor select {
   cursor: default !important;
+}
+
+/* ---------- Hero intro gate ----------
+   html.intro-pending is set pre-paint (not under reduced motion) and removed when
+   the hero intro timeline starts, so hero text never flashes before animating. */
+html.intro-pending [data-intro] {
+  visibility: hidden;
+}
+/* The portrait stays visible (LCP) and only starts slightly offset; GSAP sets the same values. */
+html.intro-pending [data-hero-portrait] {
+  transform: translateY(24px) scale(0.97);
 }

@@ -98,7 +98,7 @@ portfolio-new/
 │  │  ├─ site.ts        # nav sections + shell content (derived from profile.ts)
 │  │  ├─ diagrams.ts    # node/edge data for every system diagram
 │  │  └─ case-studies/  # <slug>.mdx long-form write-ups
-│  ├─ providers/        LensProvider, SmoothScrollProvider
+│  ├─ providers/        SmoothScrollProvider
 │  ├─ hooks/            useLens, useReducedMotionPref, useIsTouch, useMediaQuery, useSectionInView
 │  ├─ lib/              gsap.ts (plugin registration), motion.ts (tokens), cn.ts, seo.ts, utils.ts
 │  └─ types/            content.ts (shared content types)
@@ -216,7 +216,7 @@ Profile links: `devshivam.online`, `github.com/ShivamGupta322`, `linkedin.com/in
 | State | Where | Persistence |
 |---|---|---|
 | Theme | `data-theme` on `<html>`, set pre-paint by `lib/theme.ts` script | `localStorage` |
-| Lens | `LensProvider` (context + `useLens()`) | `localStorage` + `?lens=` URL param |
+| Lens | `hooks/useLens.ts`: tiny external store read with `useSyncExternalStore` (no provider); constants in `lib/lens.ts` so client code never imports all content | `localStorage` + `?lens=` URL param |
 | Active section | `useSectionInView` (IntersectionObserver) → Nav pill | — |
 | Preloader seen | `sessionStorage` | per session |
 | Contact form | `useActionState` + Server Action | — |
@@ -249,7 +249,7 @@ NEXT_PUBLIC_SITE_URL=https://www.devshivam.online
 | LCP | < 2.5 s (4G, mid-range Android) |
 | CLS | < 0.05 |
 | INP | < 200 ms |
-| Initial JS (home, gzip) | < 180 KB. GSAP, Motion and Lenis are shared, while OGL, stages and the lightbox are lazy. |
+| Initial JS (home, gzip) | ≤ 300 KB. Measured in Phase 4: ~281 KB = React/Next ~115 + GSAP/ScrollTrigger/SplitText/Lenis/Motion ~102 + app ~64. OGL aurora (14 KB) is lazy. The original 180 KB target isn't reachable with both GSAP and Motion; Phase 9 will try lazy-loading SplitText/preloader and trimming Motion. |
 | Hero media | Portrait < 120 KB AVIF |
 | Per-project media | Screens < 150 KB each, clips < 1.5 MB |
 
@@ -269,7 +269,7 @@ NEXT_PUBLIC_SITE_URL=https://www.devshivam.online
 | **1. Scaffold** ✅ | `create-next-app` (TS, Tailwind, App Router, src dir, Cache Components), `globals.css` tokens, fonts, theme script + `ThemeToggle`, UI primitives, `/design-system` page, ESLint/Prettier | `npm run dev` shows the token page in dark and light |
 | **2. Layout shell** ✅ | SmoothScrollProvider, Nav, MobileMenu, SectionLink, ScrollProgress, Cursor, Footer, Preloader, Reveal; `(site)` route group | Anchor nav works (nav clearance via `scroll-padding-top`), reduced-motion paths in place |
 | **3. Content** ✅ | `src/types/content.ts`, `src/content/*` from both resumes, `src/lib/content.ts` read API, `scripts/check-content.mts` | `tsc` + `npm run check:links` pass (LinkedIn/LeetCode block bots: verified by hand) |
-| **4. Hero + About** | AuroraCanvas, SplitReveal, LensToggle, stats bento | LCP < 2.5s locally (Lighthouse) |
+| **4. Hero + About** ✅ | Aurora/AuroraCanvas (OGL), Hero (parallax, intro, role rotator), LensToggle + `useLens` store, About bento (ScrubWords, CountUp, TiltCard, Magnetic) | LCP measured on the production build: desktop 0.3–1.4 s, mobile 1.6–2.0 s, CLS 0 |
 | **5. Experience** | Timeline with scroll-drawn line | Works on desktop and mobile |
 | **6. Showcase** | PhoneMockup, BrowserMockup, TerminalPanel, SystemDiagram and the 4 stages, FeaturedProjects, ProjectGrid, Archive | Each `kind` renders with real assets, and lens reorder animates |
 | **7. Case studies** | `/projects/[slug]` + MDX + OG images | All featured projects have pages, and previews render on share |

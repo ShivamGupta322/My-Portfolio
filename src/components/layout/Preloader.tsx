@@ -4,10 +4,11 @@ import { useRef, useState } from "react";
 import { site } from "@/content/site";
 import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { PRELOADER_SESSION_KEY } from "@/lib/initScript";
+import { INTRO_READY_EVENT } from "@/lib/intro";
 import { useSmoothScroll } from "@/providers/SmoothScrollProvider";
 
 /**
- * First-visit intro (under 1.6s): the name rises by character while a mono counter
+ * First-visit intro (~1.35 s): the name rises by character while a mono counter
  * runs 000 → 100, then a curtain wipes up into the page.
  * Server-rendered so it covers the first paint; CSS hides it before paint on
  * repeat visits (html[data-preloaded]), under reduced motion, and without JS.
@@ -22,7 +23,12 @@ export function Preloader() {
   useGSAP(
     () => {
       const el = root.current;
-      if (!el || getComputedStyle(el).display === "none") return;
+      if (!el || getComputedStyle(el).display === "none") {
+        // Hidden pre-paint (repeat visit / reduced motion): the intro can start now.
+        document.documentElement.setAttribute("data-preloaded", "");
+        window.dispatchEvent(new Event(INTRO_READY_EVENT));
+        return;
+      }
 
       const hash = window.location.hash;
       stop();
@@ -34,23 +40,17 @@ export function Preloader() {
         .timeline({
           defaults: { ease: "expo.out" },
           onComplete: () => {
-            try {
-              sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
-            } catch {
-              /* storage unavailable: preloader shows again next visit */
-            }
-            document.documentElement.setAttribute("data-preloaded", "");
             start();
             if (hash) scrollTo(hash, { immediate: true });
             setDone(true);
           },
         })
-        .from(split.chars, { yPercent: 110, duration: 0.8, stagger: 0.03 }, 0)
+        .from(split.chars, { yPercent: 110, duration: 0.6, stagger: 0.02 }, 0)
         .to(
           count,
           {
             value: 100,
-            duration: 1,
+            duration: 0.75,
             ease: "power2.inOut",
             onUpdate: () => {
               if (counterRef.current) {
@@ -60,7 +60,18 @@ export function Preloader() {
           },
           0,
         )
-        .to(el, { yPercent: -100, duration: 0.7, ease: "power4.inOut" }, "+=0.1");
+        // Hand over to the hero as the curtain starts lifting, so the page's main
+        // content paints ~0.6 s sooner (helps LCP on first visits).
+        .call(() => {
+          try {
+            sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
+          } catch {
+            /* storage unavailable: preloader shows again next visit */
+          }
+          document.documentElement.setAttribute("data-preloaded", "");
+          window.dispatchEvent(new Event(INTRO_READY_EVENT));
+        })
+        .to(el, { yPercent: -100, duration: 0.6, ease: "power4.inOut" });
 
       return () => split.revert();
     },
