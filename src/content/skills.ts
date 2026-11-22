@@ -1,0 +1,138 @@
+import type { SkillGroup } from "../types/content";
+
+/**
+ * Skills grouped for the marquee rows (Phase 8). `lens` decides which groups the
+ * Product / Systems toggle highlights. `icon` is a simple-icons slug (validated by
+ * `npm run check:content`); brands that simple-icons doesn't ship (AWS, Outlook,
+ * SendGrid…) render as text-only chips.
+ */
+export const skillGroups = [
+  {
+    id: "frontend-mobile",
+    title: "Frontend & Mobile",
+    lens: ["product"],
+    items: [
+      { name: "JavaScript", icon: "javascript" },
+      { name: "TypeScript", icon: "typescript" },
+      { name: "React", icon: "react" },
+      { name: "React Native", icon: "react" },
+      { name: "Next.js", icon: "nextdotjs" },
+      { name: "Vue.js", icon: "vuedotjs" },
+      { name: "Redux", icon: "redux" },
+      { name: "Zustand" },
+      { name: "Vite", icon: "vite" },
+      { name: "Tailwind CSS", icon: "tailwindcss" },
+      { name: "HTML5", icon: "html5" },
+      { name: "CSS3", icon: "css" },
+      { name: "Electron", icon: "electron" },
+      { name: "Deep Linking" },
+      { name: "i18n", icon: "i18next" },
+    ],
+  },
+  {
+    id: "backend",
+    title: "Backend & APIs",
+    lens: ["product", "systems"],
+    items: [
+      { name: "Node.js", icon: "nodedotjs" },
+      { name: "Express.js", icon: "express" },
+      { name: "REST APIs" },
+      { name: "WebSockets", icon: "socketdotio" },
+      { name: "JWT", icon: "jsonwebtokens" },
+      { name: "OAuth 2.0" },
+      { name: "2FA" },
+      { name: "Active Directory" },
+      { name: "Swagger", icon: "swagger" },
+      { name: "PHP", icon: "php" },
+    ],
+  },
+  {
+    id: "erlang-otp",
+    title: "Erlang/OTP",
+    lens: ["systems"],
+    items: [
+      { name: "Erlang", icon: "erlang" },
+      { name: "OTP", icon: "erlang" },
+      { name: "gen_server" },
+      { name: "Supervision trees" },
+      { name: "Mnesia" },
+      { name: "Cowboy" },
+      { name: "Dialyzer" },
+    ],
+  },
+  {
+    id: "realtime",
+    title: "Messaging, Real-time & VoIP",
+    lens: ["systems"],
+    items: [
+      { name: "Apache Kafka", icon: "apachekafka" },
+      { name: "XMPP", icon: "xmpp" },
+      { name: "MongooseIM" },
+      { name: "Event-driven architecture" },
+      { name: "Kazoo" },
+      { name: "FreeSWITCH" },
+      { name: "SIP" },
+    ],
+  },
+  {
+    id: "data",
+    title: "Databases",
+    lens: ["product", "systems"],
+    items: [
+      { name: "PostgreSQL", icon: "postgresql" },
+      { name: "MySQL", icon: "mysql" },
+      { name: "MongoDB", icon: "mongodb" },
+      { name: "Redis", icon: "redis" },
+      { name: "SQLite", icon: "sqlite" },
+      { name: "SQL" },
+    ],
+  },
+  {
+    id: "cloud-devops",
+    title: "Cloud & DevOps",
+    lens: ["product", "systems"],
+    items: [
+      { name: "AWS" },
+      { name: "Docker", icon: "docker" },
+      { name: "GitHub Actions", icon: "githubactions" },
+      { name: "Nginx", icon: "nginx" },
+      { name: "PM2", icon: "pm2" },
+      { name: "Linux", icon: "linux" },
+      { name: "Vercel", icon: "vercel" },
+      { name: "Netlify", icon: "netlify" },
+      { name: "Prometheus", icon: "prometheus" },
+      { name: "Git", icon: "git" },
+    ],
+  },
+  {
+    id: "testing",
+    title: "Testing",
+    lens: ["systems"],
+    items: [{ name: "EUnit" }, { name: "PropEr" }, { name: "Common Test" }, { name: "Pact" }],
+  },
+  {
+    id: "integrations",
+    title: "Integrations",
+    lens: ["product"],
+    items: [
+      { name: "Firebase", icon: "firebase" },
+      { name: "FCM", icon: "firebase" },
+      { name: "Crashlytics", icon: "firebase" },
+      { name: "Jitsi Meet", icon: "jitsi" },
+      { name: "Google Calendar API", icon: "googlecalendar" },
+      { name: "Outlook Calendar" },
+      { name: "SendGrid" },
+      { name: "Meta Ads SDK", icon: "meta" },
+      { name: "Zapier", icon: "zapier" },
+    ],
+  },
+  {
+    id: "languages",
+    title: "Also fluent in",
+    lens: ["product", "systems"],
+    items: [
+      { name: "C++", icon: "cplusplus" },
+      { name: "Python", icon: "python" },
+    ],
+  },
+] as const satisfies readonly SkillGroup[];

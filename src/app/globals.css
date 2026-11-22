@@ -428,3 +428,22 @@ html[data-preloaded] .preloader {
     display: none;
   }
 }
+
+/* ---------- Custom cursor ----------
+   Added by <Cursor /> on mouse/trackpad devices (not touch, not reduced motion).
+   Text fields keep the native I-beam so editing still feels normal. */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+html.custom-cursor
+  :is(
+    input:not([type="checkbox"], [type="radio"], [type="range"]),
+    textarea,
+    [contenteditable="true"]
+  ) {
+  cursor: text !important;
+}
+html.custom-cursor select {
+  cursor: default !important;
+}

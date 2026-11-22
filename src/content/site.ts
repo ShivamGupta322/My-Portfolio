@@ -1,6 +1,8 @@
+import { profile } from "./profile";
+
 /**
- * Site-wide content used by the layout shell (nav, footer, metadata).
- * Fuller profile/experience/project data arrives in Phase 3 (src/content/*.ts).
+ * Layout-shell content (nav, footer, metadata). Identity comes from profile.ts so
+ * there's one source of truth.
  */
 
 export interface NavSection {
@@ -18,21 +20,16 @@ export const navSections: readonly NavSection[] = [
 ];
 
 export const site = {
-  name: "Shivam Gupta",
-  initials: "SG",
-  role: "Software Engineer",
+  name: profile.name,
+  initials: profile.initials,
+  role: profile.role,
   tagline: "Full-stack, mobile & real-time systems.",
-  location: "Bareilly, Uttar Pradesh, India",
-  email: "guptashivamsg02@gmail.com",
+  location: profile.location,
+  email: profile.email,
   copyrightYear: 2026,
   resume: {
-    fullStack: "/resume/Shivam_Gupta_FullStack.pdf",
-    erlang: "/resume/Shivam_Gupta_Erlang.pdf",
+    fullStack: profile.resume.product.href,
+    erlang: profile.resume.systems.href,
   },
-  socials: [
-    { label: "GitHub", href: "https://github.com/ShivamGupta322" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/shivam-gupta-sg322/" },
-    { label: "LeetCode", href: "https://leetcode.com/u/Shivam_Gupta322/" },
-    { label: "GeeksforGeeks", href: "https://www.geeksforgeeks.org/user/guptashivamsg02/" },
-  ],
+  socials: profile.socials,
 } as const;

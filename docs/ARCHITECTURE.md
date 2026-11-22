@@ -95,12 +95,14 @@ portfolio-new/
 │  │  ├─ projects.ts    # all projects (typed), featured order per lens
 │  │  ├─ skills.ts      # grouped skills with lens tags + simple-icons slugs
 │  │  ├─ achievements.ts# DSA, scholarship, education
-│  │  ├─ diagrams/      # node/edge data per system diagram
+│  │  ├─ site.ts        # nav sections + shell content (derived from profile.ts)
+│  │  ├─ diagrams.ts    # node/edge data for every system diagram
 │  │  └─ case-studies/  # <slug>.mdx long-form write-ups
 │  ├─ providers/        LensProvider, SmoothScrollProvider
 │  ├─ hooks/            useLens, useReducedMotionPref, useIsTouch, useMediaQuery, useSectionInView
 │  ├─ lib/              gsap.ts (plugin registration), motion.ts (tokens), cn.ts, seo.ts, utils.ts
 │  └─ types/            content.ts (shared content types)
+├─ scripts/             check-content.mts (integrity + link checker, runs on Node type stripping)
 ├─ tests/               e2e/*.spec.ts (Playwright + axe)
 ├─ .github/workflows/ci.yml             # lint, typecheck, build, e2e, Lighthouse CI
 ├─ next.config.ts · tsconfig.json · eslint.config.mjs · .prettierrc · .env.example
@@ -266,7 +268,7 @@ NEXT_PUBLIC_SITE_URL=https://www.devshivam.online
 | **0. Docs** (this step) | README, ARCHITECTURE, DESIGN_SYSTEM, MOTION_AND_SHOWCASE, MASTER.md | Reviewed and approved |
 | **1. Scaffold** ✅ | `create-next-app` (TS, Tailwind, App Router, src dir, Cache Components), `globals.css` tokens, fonts, theme script + `ThemeToggle`, UI primitives, `/design-system` page, ESLint/Prettier | `npm run dev` shows the token page in dark and light |
 | **2. Layout shell** ✅ | SmoothScrollProvider, Nav, MobileMenu, SectionLink, ScrollProgress, Cursor, Footer, Preloader, Reveal; `(site)` route group | Anchor nav works (nav clearance via `scroll-padding-top`), reduced-motion paths in place |
-| **3. Content** | `src/content/*` and types filled from the resumes | `tsc` passes, every link resolves |
+| **3. Content** ✅ | `src/types/content.ts`, `src/content/*` from both resumes, `src/lib/content.ts` read API, `scripts/check-content.mts` | `tsc` + `npm run check:links` pass (LinkedIn/LeetCode block bots: verified by hand) |
 | **4. Hero + About** | AuroraCanvas, SplitReveal, LensToggle, stats bento | LCP < 2.5s locally (Lighthouse) |
 | **5. Experience** | Timeline with scroll-drawn line | Works on desktop and mobile |
 | **6. Showcase** | PhoneMockup, BrowserMockup, TerminalPanel, SystemDiagram and the 4 stages, FeaturedProjects, ProjectGrid, Archive | Each `kind` renders with real assets, and lens reorder animates |
