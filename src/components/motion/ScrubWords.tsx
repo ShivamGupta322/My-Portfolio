@@ -34,7 +34,7 @@ export function ScrubWords({ text, className }: { text: string; className?: stri
       });
       mm.add("(max-width: 63.99rem) and (prefers-reduced-motion: no-preference)", () => {
         gsap.from(el, {
-          autoAlpha: 0,
+          opacity: 0,
           y: 16,
           duration: 0.7,
           ease: "expo.out",

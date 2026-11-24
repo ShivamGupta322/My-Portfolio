@@ -83,7 +83,7 @@ function Block({ id, title, children }: { id: string; title: string; children: R
 
 export default function DesignSystemPage() {
   return (
-    <div className="relative isolate overflow-hidden">
+    <div className="relative isolate overflow-clip">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[720px] bg-aurora"

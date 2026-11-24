@@ -37,7 +37,7 @@ export function Experience({ index }: { index: string }) {
     <section
       id="experience"
       aria-labelledby="experience-title"
-      className="relative isolate overflow-hidden border-t border-glass-border section-y"
+      className="relative isolate overflow-clip border-t border-glass-border section-y"
     >
       <div
         aria-hidden

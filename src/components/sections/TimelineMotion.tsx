@@ -71,17 +71,17 @@ export function TimelineMotion({
               })
               .from(
                 item.querySelector("[data-tl-card]"),
-                { autoAlpha: 0, x: desktop ? fromX : 0, y: desktop ? 0 : 28, duration: 0.9 },
+                { opacity: 0, x: desktop ? fromX : 0, y: desktop ? 0 : 28, duration: 0.9 },
                 "-=0.3",
               )
               .from(
                 item.querySelector("[data-tl-date]"),
-                { autoAlpha: 0, y: 12, duration: 0.7 },
+                { opacity: 0, y: 12, duration: 0.7 },
                 "<0.1",
               )
               .from(
                 item.querySelectorAll("[data-tl-product]"),
-                { autoAlpha: 0, y: 14, duration: 0.6, stagger: 0.07 },
+                { opacity: 0, y: 14, duration: 0.6, stagger: 0.07 },
                 "-=0.5",
               );
           });

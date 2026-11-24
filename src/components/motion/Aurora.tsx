@@ -9,6 +9,8 @@ const AuroraCanvas = dynamic(() => import("./AuroraCanvas"), { ssr: false });
 /** WebGL only when the device can afford it (docs/ARCHITECTURE.md §5). */
 function canUseWebGL() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  // Phones and tablets get the CSS aurora: saves battery and main-thread time.
+  if (!window.matchMedia("(pointer: fine) and (min-width: 64rem)").matches) return false;
   const nav = navigator as Navigator & {
     connection?: { saveData?: boolean };
     deviceMemory?: number;

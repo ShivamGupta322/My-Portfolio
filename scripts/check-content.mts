@@ -16,6 +16,7 @@ import { experience } from "../src/content/experience.ts";
 import { profile } from "../src/content/profile.ts";
 import { archive, projects } from "../src/content/projects.ts";
 import { skillGroups } from "../src/content/skills.ts";
+import { discoverMedia } from "../src/lib/mediaDiscovery.ts";
 import type { Project } from "../src/types/content.ts";
 
 const checkLinks = process.argv.includes("--links");
@@ -212,11 +213,42 @@ if (checkLinks) {
   }
 }
 
+/* ---------- project images (public/projects/<slug>/) ---------- */
+const mediaRows: string[] = [];
+let withoutImages = 0;
+for (const p of projects as readonly Project[]) {
+  const m = discoverMedia(p.slug, publicDir);
+  const explicit = p.media;
+  const phones = (explicit.phoneScreens ?? m.phoneScreens ?? []).length;
+  const desktopScreens = (explicit.desktopScreens ?? m.desktopScreens ?? []).length;
+  const desktop = desktopScreens > 0 || Boolean(explicit.desktopFull ?? m.desktopFull);
+  const cover = Boolean(explicit.cover ?? m.cover);
+  const gallery = (explicit.gallery ?? m.gallery ?? []).length;
+  for (const f of m.ignored)
+    warn(
+      `${p.slug}: public/projects/${p.slug}/${f} doesn't match phone-N / desktop-N / desktop / cover / gallery-N, so it isn't used`,
+    );
+  // A mobile app's cover stands in for phone screens; a hybrid needs either device's screens.
+  const missing = [
+    p.kind === "mobile" && phones === 0 && !cover && "phone-N",
+    p.kind === "web" && !desktop && "desktop-N",
+    p.kind === "hybrid" && phones === 0 && !desktop && "phone-N or desktop-N",
+  ].filter(Boolean);
+  if (missing.length) withoutImages++;
+  mediaRows.push(
+    `  ${p.slug.padEnd(30)} phone:${String(phones).padStart(2)}  desktop:${desktopScreens ? String(desktopScreens).padStart(3) : desktop ? "yes" : " - "}  cover:${cover ? "yes" : " - "}  gallery:${String(gallery).padStart(2)}${missing.length ? `   (UI preview until: ${missing.join(", ")})` : ""}`,
+  );
+}
+
 /* ---------- report ---------- */
 console.log(
   `\nContent: ${projects.length} projects, ${archive.length} archive, ${experience.length} companies, ` +
     `${skillGroups.length} skill groups (${skillNames.size} skills), ${diagrams.length} diagrams.`,
 );
+console.log(`
+Project images (public/projects/<slug>/), ${withoutImages} project(s) still showing UI previews:`);
+for (const row of mediaRows) console.log(row);
+console.log("");
 for (const w of warnings) console.log(`  warn  ${w}`);
 for (const e of errors) console.log(`  ERROR ${e}`);
 console.log(errors.length ? `\n✗ ${errors.length} error(s)` : "\n✓ content checks passed");

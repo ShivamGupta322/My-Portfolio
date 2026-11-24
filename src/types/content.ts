@@ -18,7 +18,7 @@ export type ProjectKind = "mobile" | "web" | "hybrid" | "backend";
  */
 export type ProjectStatus = "live" | "shipped" | "internal" | "in-progress";
 
-export type CompanyId = "scramble-apps" | "shivsys" | "tachvision";
+export type CompanyId = "scramble-apps" | "shivsys" | "techvision";
 
 /** ISO year-month, e.g. "2025-06". */
 export type YearMonth = `${number}-${number}`;
@@ -53,9 +53,13 @@ export interface ProjectMedia {
   phoneScreens?: string[];
   /** Long full-page capture scrolled inside the BrowserMockup. */
   desktopFull?: string;
+  /** Single-screen desktop screenshots, one per highlight (desktop-N.*). */
+  desktopScreens?: string[];
   /** Secondary panels (admin, calendar…) fanned out in BrowserStage. */
   panels?: string[];
   clips?: string[];
+  /** Extra screenshots for the case-study page (usually discovered as gallery-N.*). */
+  gallery?: string[];
 }
 
 export interface Project {

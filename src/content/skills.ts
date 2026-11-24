@@ -125,6 +125,8 @@ export const skillGroups = [
       { name: "Meta Ads SDK", icon: "meta" },
       { name: "Razorpay", icon: "razorpay" },
       { name: "Zapier", icon: "zapier" },
+      { name: "Cloudinary", icon: "cloudinary" },
+      { name: "Gemini API", icon: "googlegemini" },
     ],
   },
   {

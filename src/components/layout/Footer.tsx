@@ -27,7 +27,7 @@ function MarqueeGroup() {
 
 export function Footer() {
   return (
-    <footer className="relative isolate overflow-hidden border-t border-glass-border bg-surface">
+    <footer className="relative isolate overflow-clip border-t border-glass-border bg-surface defer-render">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[70%] opacity-70 bg-aurora"

@@ -81,26 +81,32 @@ export const projects = [
       {
         title: "Backend from scratch",
         body: "Authentication, invites, scheduling and calendars, with Redis caching for scheduled and updated meeting notifications.",
+        screen: 0,
       },
       {
         title: "Secure admin panel",
         body: "Authorization-protected routes for managing users and meetings.",
+        screen: 0,
       },
       {
         title: "In-app video with Jitsi",
         body: "Integrated and customised Jitsi Meet so users can meet without leaving the platform.",
+        screen: 1,
       },
       {
         title: "Calendar sync everywhere",
         body: "Google Calendar and Outlook sync plus SendGrid email invites, so meeting changes reach every platform and attendee.",
+        screen: 0,
       },
       {
         title: "Enterprise sign-in",
         body: "Active Directory integration for enterprise sign-in and two-factor authentication for account security.",
+        screen: 0,
       },
       {
         title: "Shipped on AWS",
         body: "Deployed frontend, backend and self-hosted Jitsi on AWS EC2 (Ubuntu) with Nginx, PM2, SSL and domain routing.",
+        screen: 1,
       },
     ],
     links: { live: "https://velaconference.com" },
@@ -319,7 +325,7 @@ export const projects = [
     title: "MolBhaav",
     tagline: "Offline price ↔ weight calculator, localised into Indian languages.",
     summary:
-      "A published offline Android app for everyday market maths: convert rate and budget to weight (and back), track expenses and count notes, in Hindi, Punjabi, Tamil and English.",
+      "A published offline Android app for everyday market maths: convert rate and budget to weight (and back), track expenses and count notes, in Hindi, Punjabi, Marathi and three more languages.",
     kind: "mobile",
     lens: ["product"],
     status: "live",
@@ -339,7 +345,7 @@ export const projects = [
       },
       {
         title: "Made for India",
-        body: "Localised into Hindi, Punjabi, Tamil and English.",
+        body: "Localised into six languages, including Hindi, Punjabi and Marathi.",
         screen: 2,
       },
     ],
@@ -382,11 +388,11 @@ export const projects = [
     title: "Groceries",
     tagline: "MERN grocery delivery app with Razorpay checkout, cart and an admin panel.",
     summary:
-      "A grocery delivery web app built during my internship at Tachvision Technology, on the MERN stack: shoppers browse and fill a cart, then pay through Razorpay; staff manage products, stock and orders from a separate admin panel.",
+      "A grocery delivery web app built during my internship at Techvision Technology, on the MERN stack: shoppers browse and fill a cart, then pay through Razorpay; staff manage products, stock and orders from a separate admin panel.",
     kind: "web",
     lens: ["product"],
     status: "internal",
-    company: "tachvision",
+    company: "techvision",
     period: { start: "2024-06", end: "2024-09" },
     role: "Full Stack Developer Intern",
     stack: ["React", "Node.js", "Express.js", "MongoDB", "Razorpay"],
@@ -407,18 +413,71 @@ export const projects = [
     links: {},
     media: {},
   },
+  {
+    slug: "physiocare",
+    title: "PhysioCare",
+    tagline:
+      "Physiotherapy platform: book a specialist, consult over video and exercise with guided sessions at home.",
+    summary:
+      "My B.Tech final-year project, built in a team of four: a patient app for finding physiotherapists, booking appointments, video consultations and guided exercise sessions, plus admin and doctor panels on a shared Express and MongoDB backend.",
+    kind: "web",
+    lens: ["product"],
+    status: "shipped",
+    company: "personal",
+    role: "Final-year project · team of 4",
+    stack: [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "JWT",
+      "Jitsi Meet",
+      "Razorpay",
+      "Cloudinary",
+      "Gemini API",
+    ],
+    highlights: [
+      {
+        title: "Physiotherapy, booked online",
+        body: "Patients browse physiotherapists, book an appointment and manage upcoming visits from their profile, with a Gemini-powered assistant on hand for questions.",
+        screen: 0,
+      },
+      {
+        title: "Find the right specialist",
+        body: "Browse doctors by speciality and see who's available before booking.",
+        screen: 1,
+      },
+      {
+        title: "Pay online with Razorpay",
+        body: "Appointments are paid through Razorpay checkout: UPI, cards, netbanking and wallets.",
+        screen: 2,
+      },
+      {
+        title: "Video consultations",
+        body: "Book a video consultation with a chosen doctor, date and time, then meet face to face over Jitsi without leaving home.",
+        screen: 3,
+      },
+      {
+        title: "Guided exercise at home",
+        body: "Live exercise training plays a guided video beside the patient's own webcam feed for squats, lunges and planks.",
+        screen: 4,
+      },
+      {
+        title: "Admin and doctor panels",
+        body: "Admins add doctors and oversee every appointment; doctors manage their appointments and profile. JWT role-based auth and Cloudinary image uploads.",
+        screen: 1,
+      },
+    ],
+    links: { github: "https://github.com/ShivamGupta322/PhysioCare" },
+    media: {},
+    featured: { product: 5 },
+  },
 ] as const satisfies readonly Project[];
 
 /** College-era projects (from the previous portfolio), shown in the compact archive list. */
 export const archive = [
-  {
-    slug: "grocery-delivery",
-    title: "Grocery Delivery App",
-    description: "Full-stack grocery delivery with user authentication and payment integration.",
-    stack: ["React", "Node.js", "Express.js", "MongoDB"],
-    href: "https://github.com/ShivamGupta322/Grocery-FullStack",
-    image: "/archive/grocery-delivery.png",
-  },
   {
     slug: "text-to-speech",
     title: "Text to Speech Converter",

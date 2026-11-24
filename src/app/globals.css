@@ -183,6 +183,40 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-delayed: float 6s ease-in-out -3s infinite;
   --animate-scroll-cue: scroll-cue 2s var(--ease-in-out-quart) infinite;
+  --animate-crash: crash 4s ease-in-out infinite;
+
+  /* SystemDiagram "let it crash": worker flashes red, supervisor restarts it green */
+  @keyframes crash {
+    0%,
+    30% {
+      border-color: inherit;
+      box-shadow: none;
+      transform: translateX(0);
+    }
+    34% {
+      border-color: var(--c-danger);
+      box-shadow: 0 0 24px -4px var(--c-danger);
+      transform: translateX(-3px);
+    }
+    38% {
+      transform: translateX(3px);
+    }
+    42% {
+      border-color: var(--c-danger);
+      opacity: 0.45;
+      transform: translateX(0);
+    }
+    60% {
+      border-color: var(--c-success);
+      box-shadow: 0 0 24px -4px var(--c-success);
+      opacity: 1;
+    }
+    85%,
+    100% {
+      border-color: inherit;
+      box-shadow: none;
+    }
+  }
 
   @keyframes float {
     0%,
@@ -331,6 +365,13 @@
   @supports not (backdrop-filter: blur(1px)) {
     background: var(--c-surface);
   }
+  /* Dozens of blurred cards are expensive to paint on phones; a near-opaque
+     surface reads the same over the dark background. */
+  @media (width < 64rem) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: color-mix(in srgb, var(--c-surface) 88%, transparent);
+  }
 }
 
 @utility glass-strong {
@@ -431,16 +472,55 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
 
-/* ---------- Preloader ----------
-   Server-rendered so it covers the first paint; hidden before paint on repeat
-   visits (head script sets html[data-preloaded]), for reduced motion, and
-   without JS (see <noscript> in (site)/layout.tsx). */
+/* ---------- Preloader (CSS-driven) ----------
+   Plays without JavaScript, so it never blocks first paint/LCP on slow devices.
+   0–0.6 s name rises by character · 0–0.85 s counter 0 → 100 % · 1.0–1.6 s curtain lifts.
+   Hidden pre-paint on repeat visits (html[data-preloaded]), under reduced motion,
+   and without JS (<noscript> in (site)/layout.tsx). */
+@property --preloader-pct {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+.preloader {
+  animation: preloader-lift 0.6s var(--ease-in-out-quart) 1s forwards;
+}
+.preloader-char {
+  display: inline-block;
+  transform: translateY(110%);
+  animation: preloader-rise 0.6s var(--ease-out-expo) forwards;
+  animation-delay: calc(var(--i) * 20ms);
+}
+.preloader-count {
+  counter-reset: pct var(--preloader-pct);
+  animation: preloader-count 0.85s ease-in-out forwards;
+}
+.preloader-count::after {
+  content: counter(pct) "%";
+}
+@keyframes preloader-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes preloader-count {
+  to {
+    --preloader-pct: 100;
+  }
+}
+@keyframes preloader-lift {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
 html[data-preloaded] .preloader {
   display: none;
 }
@@ -469,15 +549,44 @@ html.custom-cursor select {
   cursor: default !important;
 }
 
-/* ---------- Hero intro gate ----------
-   html.intro-pending is set pre-paint (not under reduced motion) and removed when
-   the hero intro timeline starts, so hero text never flashes before animating. */
-html.intro-pending [data-intro] {
-  visibility: hidden;
+/* ---------- Hero intro (CSS-driven) ----------
+   Starts when the preloader curtain lifts (1 s on first visits), or almost
+   immediately on repeat visits (head script sets html[data-preloaded] pre-paint).
+   No JavaScript involved, so the LCP element paints on time even on slow phones.
+   The portrait (often the LCP element) is never faded: it only settles from an offset. */
+:root {
+  --hero-intro-delay: 1s;
 }
-/* The portrait stays visible (LCP) and only starts slightly offset; GSAP sets the same values. */
-html.intro-pending [data-hero-portrait] {
-  transform: translateY(24px) scale(0.97);
+html[data-preloaded] {
+  --hero-intro-delay: 0.05s;
+}
+.hero-line {
+  animation: hero-rise 1.1s var(--ease-out-expo) both;
+  animation-delay: calc(var(--hero-intro-delay) + var(--i, 0) * 0.12s);
+}
+.hero-fade {
+  animation: hero-fade-up 0.8s var(--ease-out-expo) both;
+  animation-delay: calc(var(--hero-intro-delay) + 0.15s + var(--i, 0) * 0.06s);
+}
+.hero-portrait {
+  animation: hero-settle 1.4s var(--ease-out-expo) both;
+  animation-delay: calc(var(--hero-intro-delay) + 0.1s);
+}
+@keyframes hero-rise {
+  from {
+    transform: translateY(110%);
+  }
+}
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+@keyframes hero-settle {
+  from {
+    transform: translateY(24px) scale(0.97);
+  }
 }
 
 /* ---------- Lens highlighting ----------
@@ -487,4 +596,29 @@ html.intro-pending [data-hero-portrait] {
 [data-current-lens="systems"] .lens-chip[data-lens-systems] {
   border-color: color-mix(in srgb, var(--c-accent) 45%, transparent);
   background-color: color-mix(in srgb, var(--c-accent) 8%, transparent);
+}
+
+/* Skill groups: groups outside the active lens step back; matching ones get an accent edge. */
+.lens-group {
+  transition:
+    opacity 400ms var(--ease-out-quart),
+    border-color 400ms var(--ease-out-quart);
+}
+[data-current-lens="product"] .lens-group:not([data-lens-product]),
+[data-current-lens="systems"] .lens-group:not([data-lens-systems]) {
+  opacity: 0.42;
+}
+[data-current-lens="product"] .lens-group[data-lens-product],
+[data-current-lens="systems"] .lens-group[data-lens-systems] {
+  border-color: color-mix(in srgb, var(--c-accent) 32%, transparent);
+}
+
+/* Skip rendering work for the last sections (Contact, footer) until they near
+   the viewport. Only used where nothing important sits below: an estimated
+   height above an anchor (e.g. on Skills) would throw off "jump to Contact".
+   Never on Work: its sticky stages and scroll triggers need real layout.
+   `auto` remembers the last rendered size. */
+@utility defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1200px;
 }

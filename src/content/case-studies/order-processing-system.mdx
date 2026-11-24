@@ -1,0 +1,63 @@
+## The problem
+
+An order system has two jobs that pull in opposite directions: accept orders quickly, and never lose or double-charge one, even when a worker crashes halfway through a payment. I wanted to build that guarantee from first principles in Erlang/OTP, with Kafka as the backbone, and prove it with tests rather than assert it.
+
+> No order is ever lost or charged twice, even when workers crash mid-flight.
+
+## How an order moves
+
+1. `POST /orders` validates the body and publishes an `order.created` event to the `orders` topic, **keyed by order ID** so every event for one order lands on the same partition. The API answers `202 Accepted`, because processing happens asynchronously.
+2. A consumer worker (one per partition) checks the idempotency store. An order it has already seen is skipped.
+3. The worker validates the order and calls the payment gateway.
+4. **Success:** the result is saved, the ID is marked processed, and the event goes to `orders.completed`.
+5. **Retryable failure** (a gateway timeout): the event goes to `orders.retry` with backoff of 1 s, then 5 s, then 30 s.
+6. **Fatal failure** (a decline or validation error) or retries used up: the event goes to `orders.dlq`.
+
+## The guarantees, and how they're earned
+
+- **At-least-once delivery** with **manual offset commits**, made only after an order is saved, retried or dead-lettered.
+- **Idempotent processing** on top, so a redelivered message never creates a duplicate. The result is effectively exactly-once, without Kafka transactions.
+- **No worker ever sleeps on a failed order.** It hands the order to the retry topic and moves on, so one bad order can't block a partition.
+- **Crash recovery by design.** If a worker dies, its consumer group restarts under its supervisor and every partition resumes from its last committed offset.
+
+The gateway also treats the order ID as an idempotency key. If a worker crashes _after_ charging but _before_ recording the order, the redelivered message gets the original receipt back instead of a second charge.
+
+## Supervision tree
+
+```
+order_app
+└── order_sup (one_for_one)
+    ├── producer_sup        brod client
+    ├── consumer_sup
+    │     └── consumer_group    one worker per partition
+    ├── retry_sup (one_for_all)
+    │     ├── retry_manager     holds retries until not_before
+    │     └── retry_group       subscriber on orders.retry
+    └── http_sup            cowboy listener
+```
+
+Children start in this order and stop in reverse: on shutdown HTTP stops first, then the consumers, then the producer they depend on. Each partition worker finishes the order in hand before stopping, and acked offsets are committed on the way out.
+
+## Design choices
+
+- **Pure core, thin shells.** Validation, encoding and the retry policy are pure functions. The HTTP handler and the consumer worker only translate between the outside world and that core.
+- **One way to reach Kafka, one way to reach storage.** All storage goes through an `order_store` behaviour, so **Mnesia and PostgreSQL swap through config** and both pass the same contract suite.
+- **Let it crash, on purpose.** No defensive `try/catch`. Supervisors handle failures; only errors with a meaningful response are caught (a Kafka error becomes `503`).
+- **Errors are classified.** The processor returns `retryable` or `fatal`, so the caller picks retry or DLQ without inspecting the reason.
+- **No atoms from external input.** Only a fixed set of known JSON keys become atoms, because atoms are never garbage-collected.
+
+## Proving it
+
+- **158 EUnit tests**, including **300 generated PropEr round-trip cases** for the JSON codec.
+- **24 Common Test cases** with Kafka and the gateway mocked at their edges: retries, in-order commits, the full timeout-to-DLQ loop, a consumer restart after a crash, duplicates charged once.
+- **Store contract suite** run against both Mnesia and PostgreSQL, including 50 concurrent writers.
+- **Pact contract tests** on the `order.created` event: renaming `amount` to `total` in the producer fails the build, as intended.
+- **End-to-end** against real Kafka and PostgreSQL: 30 orders all complete despite a worker killed mid-batch.
+- **84% line coverage** and **zero Dialyzer warnings**, run in GitHub Actions on every push.
+
+## Under load
+
+Measured end to end against the release build on a 4-core laptop (Kafka, PostgreSQL, the app and the load generator all on one machine):
+
+- **5,000 orders at 50 concurrent senders:** the API accepted 277 orders/s and processing completed at **110 orders/s**.
+- Processing tops out there because each of the 3 partitions handles one order at a time, with a gateway call, an idempotency mark, a PostgreSQL insert and a synchronous publish before each commit. **More partitions would raise it**, and Kafka absorbs the backlog in the meantime.

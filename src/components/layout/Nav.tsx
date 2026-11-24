@@ -64,7 +64,7 @@ export function Nav() {
         >
           <SectionLink
             id="top"
-            aria-label={`${site.name}, back to top`}
+            aria-label={`${site.initials}, ${site.name}: back to top`}
             className="font-display text-h4 font-bold tracking-tight"
           >
             {site.initials}

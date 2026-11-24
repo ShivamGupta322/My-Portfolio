@@ -85,7 +85,15 @@ These live in `src/lib/motion.ts` (exported for both GSAP and Motion) and mirror
 
 ---
 
-### LCP rule for intros
+### Phase 9 changes
+
+- **Preloader and hero intro are pure CSS** (`.preloader*`, `.hero-line`, `.hero-fade`, `.hero-portrait` in globals.css). The curtain lifts at 1 s and the hero starts then; on repeat visits (`html[data-preloaded]`, set pre-paint) the hero starts at once. No JavaScript sits on the LCP path, so slow phones aren't stuck behind hydration.
+- **Reveals animate opacity only** (never `autoAlpha`/visibility), so below-the-fold headings stay reachable by screen readers before they're scrolled into view.
+- **Decorative visuals mount lazily** via `LazyMount` (stage device mockups, grid mini-mockups, skill marquee) with same-size placeholders.
+- **WebGL aurora is desktop-only** (`pointer: fine` and ≥ 1024 px); phones and tablets get the CSS aurora. Cards drop `backdrop-filter` below `lg`.
+- Reduced motion also zeroes `animation-delay`, so CSS intros jump straight to their end state.
+
+### LCP rule for intros (superseded in Phase 9: intros no longer hide content before JS)
 
 Hero copy is hidden before first paint by `html.intro-pending` (`[data-intro]` → `visibility: hidden`) so it never flashes and then re-animates. The **LCP element must never be opacity-gated**: the portrait (desktop and mobile LCP) only settles from a small transform offset that CSS applies pre-paint and GSAP matches. A 4 s safety timeout in the head script reveals everything if JS fails.
 
@@ -101,6 +109,10 @@ Every project in `src/content/projects.ts` has a `kind` that selects its **stage
 | `backend` | `SystemStage` (diagram + terminal) | Fault-Tolerant Order Processing System, VoIP & Telephony Platform, Nearby (XMPP) |
 
 A project can also define an `architecture` diagram, which renders as a second "Under the hood" stage. This is how **Vela Meet, Wingtrill, Fitizen chat and Nearby** appear in *both* lenses.
+
+### Implementation note (Phase 6)
+
+All four stages share one component, `ProjectStage`. On desktop with motion allowed the section is `N × 75svh + 100svh` tall with a **CSS sticky** frame (no GSAP pin, so no pin-spacer reflow and no limit on how many stages a page can have). A ScrollTrigger maps progress to the active highlight; clicking a highlight scrolls to it. The visual reacts per kind (phone screen swap, browser screen cross-fade or full-page scroll, duo parallax, diagram edge reveal + packets + crash beat + terminal on the last step). Mobile and reduced motion get a normal section where tapping a highlight selects it, and diagrams become a vertical flow list. Real screenshots come from `public/projects/<slug>/` (`phone-N`, `desktop-N`, or a full-page `desktop`); a highlight can pick its screen with `screen`. Without them, screens show branded placeholders built from each project's highlights and tagged **UI preview**.
 
 ### 6.1 Featured order per lens
 
@@ -211,7 +223,7 @@ Pinned for ~220vh (desktop)
 
 ### 6.8 Archive (college work)
 
-Grocery Delivery (MERN), Text-to-Speech, Weather App, Fanta Reimagined, Obeys Agency UI, and Tic-Tac-Toe. These go in a compact table-style list (name · stack · year · link). On desktop a preview image follows the cursor with `spring.soft` and a slight rotation from velocity. The screenshots are reused from the old repo's `imgs/`.
+Text-to-Speech, Weather App, Fanta Reimagined, Obeys Agency UI, and Tic-Tac-Toe. These go in a compact table-style list (name · stack · year · link). On desktop a preview image follows the cursor with `spring.soft` and a slight rotation from velocity. The screenshots are reused from the old repo's `imgs/`.
 
 ---
 

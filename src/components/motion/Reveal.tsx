@@ -31,7 +31,7 @@ export function Reveal({
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.from(stagger ? el.children : el, {
-          autoAlpha: 0,
+          opacity: 0,
           y,
           duration: duration.slow,
           ease: gsapEase.outExpo,

@@ -115,14 +115,8 @@ export function formatDuration(period: Period): string | null {
   return parts.filter(Boolean).join(" ");
 }
 
-/**
- * Anchor a project link should scroll to. Until the per-project stages land
- * (Phase 6) everything points at the Work section.
- */
-export function projectAnchorId(slug: string): string {
-  void slug;
-  return "work";
-}
+/** Anchor id of a project's stage or grid card (both use `project-<slug>`). */
+export { projectAnchorId } from "@/lib/projectView";
 
 /* ---------- Skills ---------- */
 

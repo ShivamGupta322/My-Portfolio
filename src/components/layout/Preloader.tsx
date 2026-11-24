@@ -1,107 +1,45 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect } from "react";
 import { site } from "@/content/site";
-import { gsap, SplitText, useGSAP } from "@/lib/gsap";
 import { PRELOADER_SESSION_KEY } from "@/lib/initScript";
-import { INTRO_READY_EVENT } from "@/lib/intro";
-import { useSmoothScroll } from "@/providers/SmoothScrollProvider";
 
 /**
- * First-visit intro (~1.35 s): the name rises by character while a mono counter
- * runs 000 → 100, then a curtain wipes up into the page.
- * Server-rendered so it covers the first paint; CSS hides it before paint on
- * repeat visits (html[data-preloaded]), under reduced motion, and without JS.
+ * First-visit intro (~1.6 s), driven entirely by CSS (see "Preloader" in
+ * globals.css): the name rises by character while a counter runs 0 → 100 %,
+ * then the curtain lifts at 1.0 s, exactly when the hero intro starts.
+ *
+ * Being CSS-only, it plays on time even before JavaScript hydrates, so slow
+ * devices never get stuck behind it (this used to gate LCP on JS). JS only
+ * records the visit so repeat visits skip it (html[data-preloaded], set
+ * pre-paint by the head script). Hidden under reduced motion and without JS.
  */
 export function Preloader() {
-  const root = useRef<HTMLDivElement>(null);
-  const counterRef = useRef<HTMLSpanElement>(null);
-  const nameRef = useRef<HTMLParagraphElement>(null);
-  const [done, setDone] = useState(false);
-  const { stop, start, scrollTo } = useSmoothScroll();
-
-  useGSAP(
-    () => {
-      const el = root.current;
-      if (!el || getComputedStyle(el).display === "none") {
-        // Hidden pre-paint (repeat visit / reduced motion): the intro can start now.
-        document.documentElement.setAttribute("data-preloaded", "");
-        window.dispatchEvent(new Event(INTRO_READY_EVENT));
-        return;
-      }
-
-      const hash = window.location.hash;
-      stop();
-
-      const split = SplitText.create(nameRef.current, { type: "chars", mask: "chars" });
-      const count = { value: 0 };
-
-      gsap
-        .timeline({
-          defaults: { ease: "expo.out" },
-          onComplete: () => {
-            start();
-            if (hash) scrollTo(hash, { immediate: true });
-            setDone(true);
-          },
-        })
-        .from(split.chars, { yPercent: 110, duration: 0.6, stagger: 0.02 }, 0)
-        .to(
-          count,
-          {
-            value: 100,
-            duration: 0.75,
-            ease: "power2.inOut",
-            onUpdate: () => {
-              if (counterRef.current) {
-                counterRef.current.textContent = String(Math.round(count.value)).padStart(3, "0");
-              }
-            },
-          },
-          0,
-        )
-        // Hand over to the hero as the curtain starts lifting, so the page's main
-        // content paints ~0.6 s sooner (helps LCP on first visits).
-        .call(() => {
-          try {
-            sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
-          } catch {
-            /* storage unavailable: preloader shows again next visit */
-          }
-          document.documentElement.setAttribute("data-preloaded", "");
-          window.dispatchEvent(new Event(INTRO_READY_EVENT));
-        })
-        .to(el, { yPercent: -100, duration: 0.6, ease: "power4.inOut" });
-
-      return () => split.revert();
-    },
-    { scope: root },
-  );
-
-  if (done) return null;
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(PRELOADER_SESSION_KEY, "1");
+    } catch {
+      /* storage unavailable: the preloader shows again next visit */
+    }
+  }, []);
 
   return (
     <div
-      ref={root}
       aria-hidden
-      className="preloader fixed inset-0 z-40 flex flex-col justify-between bg-bg p-6 md:p-10"
+      className="preloader pointer-events-none fixed inset-0 z-40 flex flex-col justify-between bg-bg p-6 md:p-10"
     >
-      <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70 bg-aurora" />
+      <div className="pointer-events-none absolute inset-0 opacity-70 bg-aurora" />
       <p className="relative font-mono text-label text-muted uppercase">
         Portfolio · {site.copyrightYear}
       </p>
-      <p
-        ref={nameRef}
-        className="relative self-center font-display text-[clamp(2.5rem,9vw,8rem)] leading-none font-bold tracking-tight"
-      >
-        {site.name}
+      <p className="relative self-center overflow-hidden pb-[0.08em] font-display text-[clamp(2.5rem,9vw,8rem)] leading-none font-bold tracking-tight">
+        {[...site.name].map((ch, i) => (
+          <span key={i} className="preloader-char" style={{ "--i": i } as React.CSSProperties}>
+            {ch === " " ? " " : ch}
+          </span>
+        ))}
       </p>
-      <span
-        ref={counterRef}
-        className="relative self-end font-mono text-metric text-primary-text tabular-nums"
-      >
-        000
-      </span>
+      <span className="preloader-count relative self-end font-mono text-metric text-primary-text tabular-nums" />
     </div>
   );
 }

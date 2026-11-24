@@ -5,7 +5,7 @@
 
 **Live:** [devshivam.online](https://www.devshivam.online) &nbsp;·&nbsp; [GitHub](https://github.com/ShivamGupta322) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/shivam-gupta-sg322/) &nbsp;·&nbsp; [LeetCode](https://leetcode.com/u/Shivam_Gupta322/) &nbsp;·&nbsp; [GeeksforGeeks](https://www.geeksforgeeks.org/user/guptashivamsg02/)
 
-> **Status:** Phase 5 done (scroll-drawn Experience timeline across three roles). Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
+> **Status:** Phase 9 done (Lighthouse accessibility, best practices and SEO all 100; CSS-driven preloader and hero intro; branded 404). Real project screenshots are in for every product. Next: deploy. Visit `/design-system` for the living token reference. See the [roadmap](#roadmap).
 
 ---
 
@@ -33,6 +33,7 @@
 | **Order Processing System** | Event-driven, fault-tolerant backend: ~110 orders/s, 84% coverage | Erlang/OTP, Kafka, PostgreSQL, Mnesia, Prometheus | diagram + metrics |
 | **VoIP & Telephony** | Call-flow and routing on a distributed VoIP platform | Erlang, Kazoo, FreeSWITCH, SIP | diagram |
 | **Nearby** *(in progress)* | Location-based group chat that never stores raw coordinates | React, TypeScript, XMPP/MongooseIM, Docker | — |
+| **PhysioCare** *(final-year project)* | Physiotherapy platform: booking, Razorpay payments, Jitsi video consults, guided exercise, admin and doctor panels | React, Vite, Tailwind, Node.js, Express, MongoDB, JWT, Razorpay, Gemini API | [GitHub](https://github.com/ShivamGupta322/PhysioCare) |
 | **MolBhaav** | Offline price↔weight calculator in multiple Indian languages | React Native, i18n | [Play](https://play.google.com/store/apps/details?id=com.molbhaav) · [GitHub](https://github.com/ShivamGupta322/MolBhaav) |
 | **Social Media Post Scheduler** | Publish to every platform at a set time via Zapier | React (Vite), Node.js, Express, MongoDB | [Live](https://social-media-post-scheduler-eta.vercel.app/) · [GitHub](https://github.com/ShivamGupta322/social-media-post-scheduler) |
 
@@ -56,6 +57,7 @@
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Stack rationale, folder structure, content model, rendering, animation plumbing, budgets, build phases |
 | [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | Colors (dark and light, contrast-checked), typography, spacing, glass and neumorphism recipes, components |
 | [docs/MOTION_AND_SHOWCASE.md](docs/MOTION_AND_SHOWCASE.md) | Motion tokens, per-section animation map, how mobile, web, hybrid and backend projects are showcased |
+| [docs/SETUP_MEDIA_AND_EMAIL.md](docs/SETUP_MEDIA_AND_EMAIL.md) | **Before launch:** where to drop project screenshots and resumes, and how to connect contact-form email (Resend) |
 | [design-system/shivam-gupta-portfolio/MASTER.md](design-system/shivam-gupta-portfolio/MASTER.md) | Design rules in the format the `ui-ux-pro-max` skill reads |
 
 ## Getting started
@@ -87,14 +89,16 @@ Then open http://localhost:3000.
 | `npm run format` | Prettier (with Tailwind class sorting) |
 | `npm run check:content` | Validate content: cross-references, skill icons, diagrams, local assets |
 | `npm run check:links` | Same, plus a live request to every external link |
+| `npm run test:email` | Send one test email with your Resend settings from `.env.local` |
 | `npm run test:e2e` | Playwright + axe accessibility checks (Phase 9) |
 
 ### Environment variables
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `RESEND_API_KEY` | optional | Sends contact-form emails. Without it, the form falls back to `mailto:`. |
+| `RESEND_API_KEY` | optional | Sends contact-form emails. Without it (or `CONTACT_TO_EMAIL`), visitors get a ready-to-send `mailto:` instead. |
 | `CONTACT_TO_EMAIL` | with Resend | Inbox that receives messages |
+| `CONTACT_FROM_EMAIL` | optional | Verified sender, e.g. `Portfolio <hello@devshivam.online>`. Defaults to Resend's test sender, which only delivers to your Resend account's own email. |
 | `NEXT_PUBLIC_SITE_URL` | yes | Canonical URLs and OG images |
 
 ## Project structure
@@ -121,12 +125,14 @@ Full tree: [ARCHITECTURE.md §3](docs/ARCHITECTURE.md#3-folder-structure).
 All content is typed data, so you never have to touch components to update it.
 
 - **New job or role:** add it to `src/content/experience.ts`.
+- **Project screenshots:** drop `phone-1.png…`, `desktop-1.png…`, `cover.png`, `gallery-1.png…` into `public/projects/<slug>/`; they're picked up automatically ([guide](docs/SETUP_MEDIA_AND_EMAIL.md)).
 - **New project:** add an entry to `src/content/projects.ts`.
   - Pick a `kind` (`mobile` | `web` | `hybrid` | `backend`). It decides which showcase stage is used.
   - Tag it with a `lens` (`product` | `systems`).
   - Drop the media in `public/projects/<slug>/`.
   - Optionally add `src/content/case-studies/<slug>.mdx` for a full case-study page.
 - **Backend project:** add its nodes and edges to `src/content/diagrams.ts` and link it via `architecture`.
+- **Case-study write-up:** every project gets `/projects/<slug>` automatically. For a long-form "The story" section, add `src/content/case-studies/<slug>.mdx` and register it in `src/lib/caseStudies.ts`.
 - **Skills:** edit `src/content/skills.ts`. Icons are `simple-icons` slugs.
 - **Resume:** replace the PDFs in `public/resume/`.
 
@@ -139,11 +145,11 @@ TypeScript fails the build if a required field is missing, and `npm run check:co
 - [x] **2. Layout shell:** smooth scroll, nav, cursor, progress, preloader, footer
 - [x] **3. Content:** typed data from both resumes, plus an integrity and link checker
 - [x] **4. Hero + About:** aurora shader, lens toggle, parallax hero, stats bento
-- [x] **5. Experience timeline** (Scramble Apps · Shivsys · Tachvision internship)
-- [ ] **6. Showcase stages:** phone, browser, device duo, system diagram, plus grid and archive
-- [ ] **7. Case-study pages** + OG images
-- [ ] **8. Skills, achievements, contact** (Resend)
-- [ ] **9. Polish:** a11y and performance pass (ui-ux-pro-max checklist)
+- [x] **5. Experience timeline** (Scramble Apps · Shivsys · Techvision internship)
+- [x] **6. Showcase stages:** phone, browser, device duo, system diagram, plus grid and archive
+- [x] **7. Case-study pages** + OG images, sitemap, robots, JSON-LD
+- [x] **8. Skills, achievements, contact** (Resend, with a mailto fallback)
+- [x] **9. Polish:** accessibility and performance pass, branded 404 and error pages
 - [ ] **10. Launch:** Vercel + `devshivam.online`
 
 ## Credits

@@ -37,8 +37,8 @@ export const experience = [
     ],
   },
   {
-    id: "tachvision",
-    name: "Tachvision Technology",
+    id: "techvision",
+    name: "Techvision Technology",
     location: "Bareilly, Uttar Pradesh",
     roles: [
       {

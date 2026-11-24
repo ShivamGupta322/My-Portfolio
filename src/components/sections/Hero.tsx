@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import {
   AnimatePresence,
   motion,
@@ -20,8 +20,6 @@ import { experience } from "@/content/experience";
 import { profile } from "@/content/profile";
 import { useLens } from "@/hooks/useLens";
 import { useFinePointer, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { clearIntroPending, onIntroReady } from "@/lib/intro";
 import { duration, ease } from "@/lib/motion";
 
 const currentRole = experience[0].roles[0];
@@ -29,8 +27,8 @@ const currentCompany = experience[0].name.replace(/ Pvt\. Ltd\.$/, "");
 
 /**
  * Hero (docs/MOTION_AND_SHOWCASE.md §5.1)
- *  · intro: name lines rise from masks, then copy + CTAs, then the portrait
- *    (waits for the first-visit preloader; hidden pre-paint via html.intro-pending)
+ *  · intro (CSS): name lines rise from masks, then copy + CTAs, while the portrait
+ *    settles; starts as the preloader curtain lifts, needs no JavaScript
  *  · 3-plane parallax: aurora 0.2× · blobs 0.5× · portrait 0.8×, plus pointer drift
  *  · scroll-out: content scales to 0.92 and fades as the hero leaves
  *  · lens toggle swaps tagline, rotating roles, floating stats and resume link
@@ -68,49 +66,16 @@ export function Hero() {
     py.set((e.clientY / window.innerHeight - 0.5) * 2);
   }
 
-  /* ---- intro timeline ---- */
-  useGSAP(
-    () => {
-      const el = root.current;
-      if (!el) return;
-      const mm = gsap.matchMedia();
-      mm.add(
-        {
-          motion: "(prefers-reduced-motion: no-preference)",
-          reduce: "(prefers-reduced-motion: reduce)",
-        },
-        (ctx) => {
-          if (ctx.conditions?.reduce) {
-            clearIntroPending();
-            return;
-          }
-          const lines = el.querySelectorAll("[data-hero-line]");
-          const fades = el.querySelectorAll("[data-hero-fade]");
-          const portrait = el.querySelector("[data-hero-portrait]");
-          gsap.set(lines, { yPercent: 110 });
-          gsap.set(fades, { autoAlpha: 0, y: 24 });
-          gsap.set(portrait, { y: 24, scale: 0.97 }); // matches the pre-paint CSS offset
-          clearIntroPending(); // GSAP now owns visibility
-
-          const tl = gsap
-            .timeline({ paused: true, defaults: { ease: "expo.out" } })
-            .to(lines, { yPercent: 0, duration: 1.1, stagger: 0.12 }, 0)
-            // Copy starts fading in almost immediately: the tagline is the LCP element.
-            .to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.06 }, 0.15)
-            .to(portrait, { y: 0, scale: 1, duration: 1.4 }, 0.1);
-          return onIntroReady(() => tl.play());
-        },
-      );
-    },
-    { scope: root },
-  );
+  /* Intro (name lines, copy, portrait) is pure CSS: .hero-line / .hero-fade /
+     .hero-portrait in globals.css, so it plays on time before JS hydrates. */
+  const fade = (i: number) => ({ "--i": i }) as CSSProperties;
 
   return (
     <section
       ref={root}
       aria-label="Introduction"
       onPointerMove={onPointerMove}
-      className="relative isolate flex min-h-svh flex-col overflow-hidden"
+      className="relative isolate flex min-h-svh flex-col overflow-clip"
     >
       {/* Plane 1: aurora */}
       <motion.div className="absolute inset-0 -z-30" style={motionOn ? { y: auroraY } : undefined}>
@@ -140,34 +105,33 @@ export function Hero() {
         {/* ---- Copy ---- */}
         <div className="relative">
           <p
-            data-intro
-            data-hero-fade
-            className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-label text-muted uppercase shadow-none glass"
+            style={fade(0)}
+            className="hero-fade inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-label text-muted uppercase shadow-none glass"
           >
             <span aria-hidden className="size-1.5 animate-pulse-dot rounded-full bg-success" />
             {currentRole.title} · {currentCompany}
           </p>
 
-          <h1 data-intro className="mt-7 text-display">
+          <h1 className="mt-7 text-display">
             <span className="block overflow-hidden pb-[0.08em]">
-              <span data-hero-line className="block">
+              <span className="hero-line block" style={fade(0)}>
                 Shivam
               </span>
             </span>
             <span className="-mt-[0.08em] block overflow-hidden pb-[0.1em]">
-              <span data-hero-line className="block text-gradient">
+              <span className="hero-line block text-gradient" style={fade(1)}>
                 Gupta
               </span>
             </span>
           </h1>
 
-          <p data-intro data-hero-fade className="mt-6 text-h4 font-medium">
+          <p className="hero-fade mt-6 text-h4 font-medium" style={fade(1)}>
             <span className="text-muted">Building with </span>
             <span className="sr-only">{copy.roles.join(", ")}</span>
             <RoleRotator key={lens} roles={copy.roles} />
           </p>
 
-          <div data-intro data-hero-fade className="mt-4 grid max-w-[56ch]">
+          <div className="hero-fade mt-4 grid max-w-[56ch]" style={fade(2)}>
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.p
                 key={lens}
@@ -182,7 +146,7 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          <div data-intro data-hero-fade className="mt-9 flex flex-wrap items-center gap-4">
+          <div className="hero-fade mt-9 flex flex-wrap items-center gap-4" style={fade(3)}>
             <Magnetic>
               <SectionLink id="work" className={buttonVariants({ size: "lg" })}>
                 View my work <ArrowDown aria-hidden />
@@ -200,7 +164,7 @@ export function Hero() {
             </Magnetic>
           </div>
 
-          <LensToggle data-intro data-hero-fade className="mt-8" />
+          <LensToggle className="hero-fade mt-8" style={fade(4)} />
         </div>
 
         {/* ---- Portrait (plane 3) ---- */}
@@ -210,7 +174,7 @@ export function Hero() {
         >
           {/* Not opacity-gated: the portrait is the LCP element on desktop, so it must
               paint immediately; the intro only settles it from a small offset. */}
-          <div data-hero-portrait className="relative aspect-square">
+          <div className="hero-portrait relative aspect-square">
             {/* glass disc + aurora rim */}
             <div className="absolute inset-0">
               <div className="glass-gradient size-full rounded-full shadow-glow glass">
