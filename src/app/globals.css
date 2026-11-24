@@ -353,7 +353,31 @@
 }
 
 @utility section-y {
-  padding-block: clamp(6rem, 12vw, 11rem);
+  padding-block: clamp(5rem, 9vw, 8rem);
+}
+
+/* Loading shimmer behind screenshots (static under reduced motion). */
+@utility skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--c-surface) 30%,
+    color-mix(in srgb, var(--c-fg) 12%, var(--c-surface)) 50%,
+    var(--c-surface) 70%
+  );
+  background-size: 300% 100%;
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes skeleton-sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
 }
 
 @utility glass {
@@ -598,15 +622,22 @@ html[data-preloaded] {
   background-color: color-mix(in srgb, var(--c-accent) 8%, transparent);
 }
 
-/* Skill groups: groups outside the active lens step back; matching ones get an accent edge. */
+/* Skill groups: groups outside the active lens step back (still readable: ≥ 4.5:1 for chip text);
+   matching ones get an accent edge. */
 .lens-group {
   transition:
     opacity 400ms var(--ease-out-quart),
+    filter 400ms var(--ease-out-quart),
     border-color 400ms var(--ease-out-quart);
 }
 [data-current-lens="product"] .lens-group:not([data-lens-product]),
 [data-current-lens="systems"] .lens-group:not([data-lens-systems]) {
-  opacity: 0.42;
+  opacity: 0.72;
+  filter: saturate(0.5);
+}
+[data-current-lens="product"] .lens-order:not([data-lens-product]),
+[data-current-lens="systems"] .lens-order:not([data-lens-systems]) {
+  order: 1;
 }
 [data-current-lens="product"] .lens-group[data-lens-product],
 [data-current-lens="systems"] .lens-group[data-lens-systems] {

@@ -7,15 +7,14 @@ import { achievements } from "@/content/achievements";
 import { skillGroups } from "@/content/skills";
 import { iconPath } from "@/lib/icons";
 import type { Lens } from "@/types/content";
-import { SkillMarquee, type MarqueeSkill } from "./SkillMarquee";
 
 const lensLabel = { product: "Product", systems: "Systems" } as const;
 
 /**
  * Skills (docs/MOTION_AND_SHOWCASE.md §5.6–5.7). Server component: resolves
  * brand icons here, then renders
- *  · three velocity-reactive marquee rows (decorative, client)
- *  · every skill group as a card; groups outside the active lens dim
+ *  · every skill group as a card; groups matching the active lens move first
+ *    and get an accent edge, the others step back (CSS only, via LensScope)
  *  · achievements (DSA, scholarship)
  */
 export function Skills({ index }: { index: string }) {
@@ -25,13 +24,7 @@ export function Skills({ index }: { index: string }) {
     items: g.items.map((s) => ({ name: s.name, iconPath: "icon" in s ? iconPath(s.icon) : null })),
   }));
 
-  // Unique skills spread across three marquee rows.
-  const seen = new Set<string>();
-  const all: MarqueeSkill[] = groups
-    .flatMap((g) => g.items)
-    .filter((s) => (seen.has(s.name) ? false : (seen.add(s.name), true)));
-  const perRow = Math.ceil(all.length / 3);
-  const rows = [0, 1, 2].map((r) => all.slice(r * perRow, (r + 1) * perRow));
+  const total = new Set(groups.flatMap((g) => g.items.map((s) => s.name))).size;
 
   return (
     <section
@@ -51,20 +44,21 @@ export function Skills({ index }: { index: string }) {
             eyebrow="Skills"
             title="Tools I reach for"
             highlight="Tools"
-            intro={`${all.length} tools across web, mobile, backend and Erlang/OTP. Groups that match the lens you picked stay bright.`}
+            intro={`${total} tools across web, mobile, backend and Erlang/OTP. Groups that match the lens you picked come first.`}
           />
         </Reveal>
       </div>
 
-      <div className="mt-12">
-        <SkillMarquee rows={rows} />
-      </div>
-
-      <LensScope className="container-page mt-14">
+      <LensScope className="container-page mt-12">
         <h3 className="sr-only">Skills by area</h3>
         <Reveal stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {groups.map((g) => (
-            <div key={g.id}>
+            <div
+              key={g.id}
+              data-lens-product={g.lens.includes("product") ? "" : undefined}
+              data-lens-systems={g.lens.includes("systems") ? "" : undefined}
+              className="lens-order"
+            >
               <article
                 data-lens-product={g.lens.includes("product") ? "" : undefined}
                 data-lens-systems={g.lens.includes("systems") ? "" : undefined}

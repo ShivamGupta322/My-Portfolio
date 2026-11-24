@@ -37,12 +37,16 @@ export const profile = {
         "Full-stack & mobile engineer shipping apps to Play Store and App Store, and the backends they talk to.",
       summary:
         "Software engineer with nearly 2 years of experience building web and mobile apps with React, React Native, Next.js, Vue.js, Node.js and TypeScript. I built a video-conferencing platform's backend from scratch and deployed it on AWS, and shipped React Native apps with real-time chat, push notifications and deep linking.",
-      roles: ["Full-stack", "React Native", "Next.js", "Node.js"],
+      roles: ["React Native", "Next.js", "Node.js", "Vue.js"],
       stats: [
         { value: "~2 yrs", label: "building web & mobile apps" },
         { value: "10K+", label: "downloads on FitExGo" },
         { value: "3", label: "apps shipped to app stores" },
         { value: "400+", label: "DSA problems solved" },
+      ],
+      chips: [
+        { value: "5", label: "products live right now" },
+        { value: "Full-stack", label: "React, Next.js, React Native, Node.js" },
       ],
     },
     systems: {
@@ -52,12 +56,16 @@ export const profile = {
         "Backend engineer building concurrent, fault-tolerant, real-time systems in Erlang/OTP.",
       summary:
         "Backend engineer with 1+ year of Erlang/OTP: a Kafka-based order processing system with at-least-once delivery, idempotent processing, retries, dead-letter queues and OTP supervision trees, plus XMPP messaging on MongooseIM and a Kazoo/FreeSWITCH VoIP platform.",
-      roles: ["Erlang/OTP", "Kafka", "XMPP", "VoIP"],
+      roles: ["Erlang/OTP", "Apache Kafka", "XMPP", "FreeSWITCH"],
       stats: [
         { value: "~110/s", label: "orders processed end to end" },
         { value: "84%", label: "test coverage" },
         { value: "0", label: "Dialyzer warnings" },
         { value: "400+", label: "DSA problems solved" },
+      ],
+      chips: [
+        { value: "OTP", label: "supervision trees that restart on crash" },
+        { value: "Kafka", label: "at-least-once delivery, retries, DLQ" },
       ],
     },
   },

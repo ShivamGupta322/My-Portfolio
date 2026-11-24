@@ -85,7 +85,10 @@ export function About({ index }: { index: string }) {
           {copy.stats.map((stat, i) => (
             <div key={`${lens}-${i}`}>
               <TiltCard className={cn(tile, "flex min-h-40 flex-col justify-between gap-6")}>
-                <CountUp value={stat.value} className="font-mono text-metric tabular-nums" />
+                <CountUp
+                  value={stat.value}
+                  className="font-mono text-[clamp(2.25rem,2.6vw+0.75rem,3.25rem)] leading-none font-semibold tracking-[-0.02em] whitespace-nowrap text-gradient tabular-nums"
+                />
                 <p className="text-small text-muted">{stat.label}</p>
               </TiltCard>
             </div>
@@ -115,7 +118,8 @@ export function About({ index }: { index: string }) {
 
           {/* Location */}
           <div>
-            <TiltCard className={cn(tile, "flex flex-col justify-between gap-6")}>
+            <TiltCard className={cn(tile, "relative flex flex-col justify-between gap-6 overflow-hidden")}>
+              <LocationPing />
               <p className="flex items-center gap-2 font-mono text-label text-muted uppercase">
                 <MapPin aria-hidden className="size-3.5 text-primary-text" /> Based in
               </p>
@@ -124,6 +128,7 @@ export function About({ index }: { index: string }) {
                 <p className="mt-1 text-small text-muted">
                   <LocalTime /> IST · UTC+5:30
                 </p>
+                <p className="mt-1 font-mono text-[0.6875rem] text-muted">28.37° N · 79.43° E</p>
               </div>
             </TiltCard>
           </div>
@@ -144,6 +149,18 @@ export function About({ index }: { index: string }) {
         </Reveal>
       </div>
     </section>
+  );
+}
+
+/** Decorative map ping in the corner of the location tile (static under reduced motion). */
+function LocationPing() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute -top-6 -right-6 size-36">
+      <div className="absolute inset-0 rounded-full border border-accent/15" />
+      <div className="absolute inset-[18%] rounded-full border border-accent/20" />
+      <div className="absolute inset-[36%] rounded-full border border-accent/30 motion-safe:animate-ping" />
+      <div className="absolute top-1/2 left-1/2 size-2.5 -translate-1/2 rounded-full bg-accent shadow-[0_0_14px_var(--c-accent)]" />
+    </div>
   );
 }
 

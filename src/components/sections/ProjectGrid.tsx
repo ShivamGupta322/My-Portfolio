@@ -36,9 +36,17 @@ const filters = [
   { value: "backend", label: "Backend" },
 ] as const satisfies readonly { value: KindFilter; label: string }[];
 
+/** Finished work leads; work in progress goes last. */
+const STATUS_ORDER: Record<ProjectView["status"], number> = {
+  live: 0,
+  shipped: 0,
+  internal: 1,
+  "in-progress": 2,
+};
+
 /**
- * Every project not featured in the current lens, lens-matching ones first.
- * Filter chips reflow cards with Motion layout animations.
+ * Every project not featured in the current lens: work in progress always last;
+ * otherwise lens-matching first, then shipped before internal. Filter chips reflow cards with Motion layout animations.
  */
 export function ProjectGrid({
   projects,
@@ -52,10 +60,15 @@ export function ProjectGrid({
 
   const items = projects
     .filter((p) => p.featured[lens] === undefined && matchesKind(p.kind, filter))
-    .sort((a, b) => Number(b.lens.includes(lens)) - Number(a.lens.includes(lens)));
+    .sort(
+      (a, b) =>
+        Number(a.status === "in-progress") - Number(b.status === "in-progress") ||
+        Number(b.lens.includes(lens)) - Number(a.lens.includes(lens)) ||
+        STATUS_ORDER[a.status] - STATUS_ORDER[b.status],
+    );
 
   return (
-    <div>
+    <div id="more-projects" className="scroll-mt-28">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h3 className="text-h3">More projects</h3>
@@ -185,14 +198,25 @@ function MiniVisual({ project, diagram }: { project: ProjectView; diagram?: Diag
 
   // A cover image (public/projects/<slug>/cover.*) fills the card for any kind.
   if (cover) {
+    const sizes = "(min-width: 1024px) 380px, (min-width: 768px) 50vw, 100vw";
+    // The whole cover, on a blurred copy of itself: wide banners keep their edges.
     return (
-      <Image
-        src={cover}
-        alt={`${project.title} preview`}
-        fill
-        sizes="(min-width: 1024px) 380px, (min-width: 768px) 50vw, 100vw"
-        className="object-cover object-top"
-      />
+      <>
+        <Image
+          src={cover}
+          alt=""
+          fill
+          sizes={sizes}
+          className="scale-110 object-cover opacity-60 blur-xl"
+        />
+        <Image
+          src={cover}
+          alt={`${project.title} preview`}
+          fill
+          sizes={sizes}
+          className="object-contain"
+        />
+      </>
     );
   }
 
@@ -201,6 +225,17 @@ function MiniVisual({ project, diagram }: { project: ProjectView; diagram?: Diag
       <>
         {glow}
         <DiagramThumb diagram={diagram} />
+        {/* caption: the headline metric, else what the diagram shows */}
+        <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[0.625rem] text-white/85">
+          {project.metrics[0] ? (
+            <>
+              <span className="text-white">{project.metrics[0].value}</span>{" "}
+              {project.metrics[0].label}
+            </>
+          ) : (
+            <>Architecture · {diagram.title}</>
+          )}
+        </span>
       </>
     );
 

@@ -227,7 +227,11 @@ function Field({
         {label}
       </label>
       {multiline ? (
-        <textarea {...shared} rows={6} className={cn(shared.className, "min-h-36 resize-y py-3")} />
+        <textarea
+          {...shared}
+          rows={6}
+          className={cn(shared.className, "min-h-36 resize-y py-3 lg:min-h-56")}
+        />
       ) : (
         <input
           {...shared}

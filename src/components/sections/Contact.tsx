@@ -66,7 +66,7 @@ export function Contact({ index }: { index: string }) {
                     <span className="block font-mono text-label text-muted uppercase">
                       LinkedIn
                     </span>
-                    <span className="mt-1.5 block font-semibold">shivam-gupta-sg322</span>
+                    <span className="mt-1.5 block font-semibold">{profile.name}</span>
                   </span>
                   <ArrowUpRight
                     aria-hidden

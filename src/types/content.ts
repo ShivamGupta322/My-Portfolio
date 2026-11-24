@@ -167,6 +167,8 @@ export interface Profile {
       summary: string;
       roles: readonly string[];
       stats: readonly Metric[];
+      /** Two short identity chips floating by the hero portrait (not repeats of `stats`). */
+      chips: readonly [Metric, Metric];
     }
   >;
 }

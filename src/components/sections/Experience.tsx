@@ -171,10 +171,10 @@ export function Experience({ index }: { index: string }) {
                                       className="size-4 shrink-0 text-primary-text"
                                     />
                                     <span className="font-display font-semibold">{p.title}</span>
-                                    <span className="sr-only">({kindMeta[p.kind].label})</span>
                                   </span>
-                                  <span className="line-clamp-2 text-small text-muted">
-                                    {p.tagline}
+                                  {/* a short type label instead of a clipped tagline */}
+                                  <span className="font-mono text-[0.6875rem] tracking-[0.08em] text-muted uppercase">
+                                    {kindMeta[p.kind].label}
                                   </span>
                                 </SectionLink>
                               </li>

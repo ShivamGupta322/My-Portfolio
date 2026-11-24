@@ -109,7 +109,9 @@ export function Hero() {
             className="hero-fade inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-label text-muted uppercase shadow-none glass"
           >
             <span aria-hidden className="size-1.5 animate-pulse-dot rounded-full bg-success" />
-            {currentRole.title} · {currentCompany}
+            {currentRole.title}
+            {/* company drops on small phones so the badge stays on one line */}
+            <span className="hidden sm:inline"> · {currentCompany}</span>
           </p>
 
           <h1 className="mt-7 text-display">
@@ -162,7 +164,7 @@ export function Hero() {
             </Magnetic>
           </div>
 
-          <LensToggle className="hero-fade mt-8" style={fade(4)} />
+          <LensToggle hint className="hero-fade mt-8" style={fade(4)} />
         </div>
 
         {/* ---- Portrait (plane 3) ---- */}
@@ -196,11 +198,7 @@ export function Hero() {
               className="absolute top-[18%] -left-4 sm:-left-10"
               style={motionOn ? { x: chipsX, y: chipsY } : undefined}
             >
-              <FloatingStat
-                key={`${lens}-a`}
-                value={copy.stats[1].value}
-                label={copy.stats[1].label}
-              />
+              <FloatingStat key={`${lens}-a`} value={copy.chips[0].value} label={copy.chips[0].label} />
             </motion.div>
             <motion.div
               className="absolute -right-2 bottom-[12%] sm:-right-6"
@@ -208,8 +206,8 @@ export function Hero() {
             >
               <FloatingStat
                 key={`${lens}-b`}
-                value={copy.stats[0].value}
-                label={copy.stats[0].label}
+                value={copy.chips[1].value}
+                label={copy.chips[1].label}
                 delay
               />
             </motion.div>

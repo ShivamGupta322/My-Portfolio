@@ -2,6 +2,7 @@
 
 import Image, { getImageProps } from "next/image";
 import { useRef, useState, type CSSProperties } from "react";
+import { preload } from "react-dom";
 import {
   AnimatePresence,
   motion,
@@ -9,7 +10,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { Cpu, Smartphone } from "lucide-react";
+import { ArrowDown, Cpu, Smartphone } from "lucide-react";
 import { LazyMount } from "@/components/motion/LazyMount";
 import { TechChip } from "@/components/ui/TechChip";
 import { useIsDesktop, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
@@ -41,7 +42,10 @@ import { TerminalPanel } from "./TerminalPanel";
  *   hybrid → browser + phone in parallax (with an "Under the hood" diagram) ·
  *   backend → edges draw into the architecture diagram, packets flow, and on
  *   the last step the supervised worker crashes and restarts and the terminal types.
- * Mobile / reduced motion: a normal section; tapping a highlight selects it.
+ * Only `pinned` stages (the first few) get the tall scroll-driven layout; the
+ * rest, and every stage on mobile / reduced motion, are normal sections where
+ * tapping a highlight selects it. On mobile the visual sits between the title
+ * and the highlights so a tap visibly changes it.
  * The tall/sticky layout is pure CSS (motion-safe:lg:), so SSR is already correct.
  */
 export function ProjectStage({
@@ -49,11 +53,17 @@ export function ProjectStage({
   index,
   diagram,
   defaultUnderHood = false,
+  pinned = true,
+  skipTo,
 }: {
   project: ProjectView;
   index: number;
   diagram?: DiagramView;
   defaultUnderHood?: boolean;
+  /** Tall scroll-driven stage on desktop; false = compact section, tap to switch steps. */
+  pinned?: boolean;
+  /** Element id the "skip" link jumps to (next project or the grid). */
+  skipTo?: { id: string; label: string };
 }) {
   const ref = useRef<HTMLElement>(null);
   const steps = Math.max(1, project.highlights.length);
@@ -63,7 +73,7 @@ export function ProjectStage({
   const progress = useMotionValue(0);
   const isDesktop = useIsDesktop();
   const reducedMotion = usePrefersReducedMotion();
-  const scrollDriven = isDesktop && !reducedMotion;
+  const scrollDriven = isDesktop && !reducedMotion && pinned;
   const { scrollTo } = useSmoothScroll();
   const [underHood, setUnderHood] = useState(defaultUnderHood && Boolean(diagram));
 
@@ -76,7 +86,8 @@ export function ProjectStage({
       const el = ref.current;
       if (!el) return;
       const mm = gsap.matchMedia();
-      mm.add("(min-width: 64rem) and (prefers-reduced-motion: no-preference)", () => {
+      const desktopMotion = "(min-width: 64rem) and (prefers-reduced-motion: no-preference)";
+      if (pinned) mm.add(desktopMotion, () => {
         ScrollTrigger.create({
           trigger: el,
           start: "top top",
@@ -103,17 +114,55 @@ export function ProjectStage({
             scrollTrigger: { trigger: el, start: "top bottom", end: "top top", scrub: 0.6 },
           },
         );
-      });
-      mm.add("(max-width: 63.99rem), (prefers-reduced-motion: reduce)", () => {
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top 85%",
-          end: "bottom 15%",
-          onToggle: (self) => setActive(self.isActive),
+        // Hand-off: the copy rises in as the stage arrives and the whole frame
+        // recedes as it leaves, so one project flows into the next.
+        gsap.fromTo(
+          el.querySelector("[data-stage-copy]"),
+          { opacity: 0, y: 48 },
+          {
+            opacity: 1,
+            y: 0,
+            ease: "none",
+            scrollTrigger: { trigger: el, start: "top 85%", end: "top 15%", scrub: 0.6 },
+          },
+        );
+        gsap.to(el.querySelector("[data-stage-frame]"), {
+          opacity: 0,
+          scale: 0.96,
+          y: -40,
+          ease: "none",
+          scrollTrigger: { trigger: el, start: "bottom 95%", end: "bottom 35%", scrub: 0.6 },
         });
       });
+      // Compact stages simply rise into view on desktop.
+      if (!pinned)
+        mm.add(desktopMotion, () => {
+          gsap.fromTo(
+            [el.querySelector("[data-stage-copy]"), el.querySelector("[data-stage-visual]")],
+            { opacity: 0, y: 48 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.9,
+              ease: "expo.out",
+              stagger: 0.12,
+              scrollTrigger: { trigger: el, start: "top 80%", once: true },
+            },
+          );
+        });
+      mm.add(
+        pinned ? "(max-width: 63.99rem), (prefers-reduced-motion: reduce)" : "all",
+        () => {
+          ScrollTrigger.create({
+            trigger: el,
+            start: "top 85%",
+            end: "bottom 15%",
+            onToggle: (self) => setActive(self.isActive),
+          });
+        },
+      );
     },
-    { scope: ref, dependencies: [steps] },
+    { scope: ref, dependencies: [steps, pinned] },
   );
 
   function selectStep(i: number) {
@@ -136,17 +185,33 @@ export function ProjectStage({
       id={anchor}
       aria-labelledby={`${anchor}-title`}
       style={{ "--steps": steps } as CSSProperties}
-      className="relative motion-safe:lg:h-[calc(var(--steps)*75svh+100svh)]"
+      className={cn(
+        "relative",
+        pinned && "motion-safe:lg:h-[calc(var(--steps)*45svh+100svh)]",
+        // stacked on mobile, consecutive projects get a divider
+        index > 0 && "max-lg:border-t max-lg:border-glass-border",
+      )}
     >
-      <div className="flex items-center py-14 motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-svh motion-safe:lg:py-0">
-        <div className="container-page grid w-full items-center gap-10 lg:grid-cols-12 lg:gap-12">
-          {/* ---------- Copy + steps ---------- */}
+      <div
+        data-stage-frame
+        className={cn(
+          "flex items-center py-14",
+          pinned
+            ? "motion-safe:lg:sticky motion-safe:lg:top-0 motion-safe:lg:h-svh motion-safe:lg:py-0"
+            : "lg:py-24",
+        )}
+      >
+        <div className="container-page grid w-full items-center gap-8 lg:grid-cols-12 lg:gap-12">
+          {/* ---------- Copy + steps (`contents` on mobile so the visual can sit mid-way) ---------- */}
           <div
+            data-stage-copy
             className={cn(
+              "contents lg:block",
               isBackend ? "lg:col-span-4" : "lg:col-span-5",
               visualFirst && "lg:order-2",
             )}
           >
+            <div className="order-1">
             <p className="font-mono text-label text-muted uppercase">
               <span className="text-primary-text">{String(index + 1).padStart(2, "0")}</span> ·{" "}
               {KIND_LABEL[project.kind]}
@@ -159,8 +224,10 @@ export function ProjectStage({
               {project.title}
             </h3>
             <p className="mt-3 text-lead text-muted">{project.tagline}</p>
+            </div>
 
-            <ol className="mt-6 space-y-0.5" aria-label={`${project.title} highlights`}>
+            <div className="order-3">
+            <ol className="space-y-0.5 lg:mt-6" aria-label={`${project.title} highlights`}>
               {project.highlights.map((h, i) => {
                 const on = i === step;
                 return (
@@ -229,15 +296,36 @@ export function ProjectStage({
                 </li>
               ))}
             </ul>
+
+            {scrollDriven && (
+              <div className="mt-6 flex items-center gap-4 font-mono text-label text-muted">
+                <span aria-hidden className="tabular-nums">
+                  <span className="text-fg">{String(step + 1).padStart(2, "0")}</span> /{" "}
+                  {String(steps).padStart(2, "0")}
+                </span>
+                {skipTo && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      scrollTo(`#${skipTo.id}`, skipTo.id.startsWith("project-") ? { offset: 0 } : undefined)
+                    }
+                    className="inline-flex items-center gap-1.5 uppercase transition-colors hover:text-fg"
+                  >
+                    Skip to {skipTo.label} <ArrowDown aria-hidden className="size-3.5" />
+                  </button>
+                )}
+              </div>
+            )}
+            </div>
           </div>
 
           {/* ---------- Visual ---------- */}
           <div
             data-stage-visual
             className={cn(
-              "relative",
+              "relative order-2",
               isBackend ? "lg:col-span-8" : "lg:col-span-7",
-              visualFirst && "lg:order-1",
+              visualFirst ? "lg:order-1" : "lg:order-none",
             )}
           >
             {project.kind === "hybrid" && diagram && (
@@ -284,7 +372,17 @@ export function ProjectStage({
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: duration.base, ease: ease.outExpo }}
                 >
-                  <LazyMount fallback={<VisualPlaceholder kind={project.kind} />}>
+                  <LazyMount
+                    rootMargin="1400px 0px"
+                    fallback={
+                      <VisualPlaceholder
+                        kind={project.kind}
+                        phoneOnMobile={
+                          project.kind === "hybrid" && Boolean(project.media.phoneScreens?.length)
+                        }
+                      />
+                    }
+                  >
                     {project.kind === "mobile" && <PhoneVisual project={project} step={step} />}
                     {project.kind === "web" && (
                       <BrowserVisual project={project} step={step} progress={progress} />
@@ -295,6 +393,7 @@ export function ProjectStage({
                         step={step}
                         progress={progress}
                         parallax={scrollDriven}
+                        compact={!isDesktop}
                       />
                     )}
                   </LazyMount>
@@ -316,18 +415,53 @@ function optimizedSrc(src: string, width: number) {
 }
 
 /** Reserves the device's footprint until the (decorative) mockup mounts. */
-function VisualPlaceholder({ kind }: { kind: ProjectView["kind"] }) {
-  if (kind === "mobile") {
-    return <div aria-hidden className="mx-auto aspect-[9/19.5] w-[min(290px,68vw)]" />;
-  }
-  return (
-    <div aria-hidden className={kind === "hybrid" ? "pr-[14%] pb-[16%]" : undefined}>
+function VisualPlaceholder({
+  kind,
+  phoneOnMobile = false,
+}: {
+  kind: ProjectView["kind"];
+  /** A hybrid that shows only its phone below lg (see DuoVisual `compact`). */
+  phoneOnMobile?: boolean;
+}) {
+  const phone = <div aria-hidden className="mx-auto aspect-[9/19.5] w-[min(290px,60vw)]" />;
+  if (kind === "mobile") return phone;
+  const browser = (
+    <div aria-hidden className={kind === "hybrid" ? "pr-[9%] pb-[12%]" : undefined}>
       <div className="aspect-[2/1] rounded-md border border-glass-border bg-elevated/40" />
     </div>
   );
+  if (!phoneOnMobile) return browser;
+  return (
+    <>
+      <div className="lg:hidden">{phone}</div>
+      <div className="max-lg:hidden">{browser}</div>
+    </>
+  );
 }
 
+/** Warm the cache for every screen of a stage once it mounts, so step changes never flash empty. */
+function usePreloadScreens(screens: readonly string[] | undefined, sizes: string) {
+  for (const src of screens ?? []) {
+    const { props } = getImageProps({ src, alt: "", fill: true, sizes });
+    preload(props.src, {
+      as: "image",
+      imageSrcSet: props.srcSet,
+      imageSizes: props.sizes,
+      fetchPriority: "low",
+    });
+  }
+}
+
+/** Shimmer shown behind a screenshot until it paints over it. */
+function ScreenSkeleton() {
+  return <div aria-hidden className="absolute inset-0 skeleton" />;
+}
+
+const PHONE_SIZES = "320px";
+const BROWSER_SIZES = "(min-width: 64rem) 760px, 100vw";
+
 function PhoneScreen({ project, step }: { project: ProjectView; step: number }) {
+  usePreloadScreens(project.media.phoneScreens, PHONE_SIZES);
   // One screenshot per highlight (its `screen`, else the step); with fewer
   // screenshots than highlights, cycle the real ones rather than mixing in placeholders.
   const shot = screenFor(project.media.phoneScreens, project.highlights, step);
@@ -343,13 +477,16 @@ function PhoneScreen({ project, step }: { project: ProjectView; step: number }) 
         transition={{ duration: 0.5, ease: ease.outExpo }}
       >
         {shot ? (
-          <Image
-            src={shot}
-            alt={`${project.title}: ${h.title}`}
-            fill
-            sizes="320px"
-            className="object-cover"
-          />
+          <>
+            <ScreenSkeleton />
+            <Image
+              src={shot}
+              alt={`${project.title}: ${h.title}`}
+              fill
+              sizes={PHONE_SIZES}
+              className="object-cover"
+            />
+          </>
         ) : (
           <PhoneScreenPlaceholder
             title={project.title}
@@ -388,7 +525,7 @@ function PhoneVisual({ project, step }: { project: ProjectView; step: number }) 
         className="absolute inset-[-15%] -z-10 rounded-full opacity-35 blur-3xl"
         style={{ background: `radial-gradient(circle, ${project.accent}, transparent 65%)` }}
       />
-      <div className="w-[min(290px,68vw)]">
+      <div className="w-[min(290px,60vw)]">
         <PhoneMockup>
           <PhoneScreen project={project} step={step} />
         </PhoneMockup>
@@ -413,6 +550,7 @@ function BrowserScreen({
   const full = project.media.desktopFull;
   const shot = screenFor(project.media.desktopScreens, project.highlights, step);
   const bgY = useTransform(progress, [0, 1], ["0%", "100%"]);
+  usePreloadScreens(project.media.desktopScreens, BROWSER_SIZES);
 
   if (shot) {
     // One real screen per highlight, cross-faded as the steps change.
@@ -427,11 +565,12 @@ function BrowserScreen({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: ease.outExpo }}
         >
+          <ScreenSkeleton />
           <Image
             src={shot}
             alt={`${project.title}: ${h.title}`}
             fill
-            sizes="(min-width: 64rem) 720px, 100vw"
+            sizes={BROWSER_SIZES}
             className="object-cover object-top"
           />
         </motion.div>
@@ -502,20 +641,25 @@ function DuoVisual({
   step,
   progress,
   parallax,
+  compact = false,
 }: {
   project: ProjectView;
   step: number;
   progress: MotionValue<number>;
   parallax: boolean;
+  /** Small screens: one device, big enough to read (the phone when it has real screens). */
+  compact?: boolean;
 }) {
   const phoneY = useTransform(progress, [0, 1], [50, -50]);
+  if (compact && project.media.phoneScreens?.length)
+    return <PhoneVisual project={project} step={step} />;
   const url = project.links.live ? hostOf(project.links.live) : `${project.slug}.app`;
   // Real desktop screens but no phone ones: show the browser alone rather than
   // pairing a real page with a placeholder phone.
   const showPhone = Boolean(project.media.phoneScreens?.length) || !hasDesktopImage(project);
   if (!showPhone) return <BrowserVisual project={project} step={step} progress={progress} />;
   return (
-    <div className="relative pr-[14%] pb-[16%]">
+    <div className="relative pr-[9%] pb-[12%]">
       <div
         aria-hidden
         className="absolute inset-[-6%] -z-10 opacity-30 blur-3xl"
@@ -531,7 +675,7 @@ function DuoVisual({
         />
       </BrowserMockup>
       <motion.div
-        className="absolute right-0 bottom-0 w-[30%] min-w-[110px]"
+        className="absolute right-0 bottom-0 w-[27%] min-w-[110px]"
         style={parallax ? { y: phoneY } : undefined}
       >
         <PhoneMockup>
