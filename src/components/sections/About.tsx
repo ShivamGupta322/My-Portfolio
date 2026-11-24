@@ -69,7 +69,7 @@ export function About({ index }: { index: string }) {
                 <ScrubWords
                   key={lens}
                   text={copy.summary}
-                  className="mt-5 font-display text-[clamp(1.25rem,1.1vw+0.9rem,1.6rem)] leading-snug font-medium"
+                  className="mt-5 text-justify font-display text-[clamp(1.25rem,1.1vw+0.9rem,1.6rem)] leading-snug font-medium hyphens-auto"
                 />
               </div>
               <p className="flex flex-wrap items-center gap-2 text-small text-muted">
