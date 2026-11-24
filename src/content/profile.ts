@@ -39,10 +39,10 @@ export const profile = {
         "Software engineer with nearly 2 years of experience building web and mobile apps with React, React Native, Next.js, Vue.js, Node.js and TypeScript. I built a video-conferencing platform's backend from scratch and deployed it on AWS, and shipped React Native apps with real-time chat, push notifications and deep linking.",
       roles: ["React Native", "Next.js", "Node.js", "Vue.js"],
       stats: [
-        { value: "~2 yrs", label: "building web & mobile apps" },
-        { value: "10K+", label: "downloads on FitExGo" },
-        { value: "3", label: "apps shipped to app stores" },
-        { value: "400+", label: "DSA problems solved" },
+        { value: "~2 yrs", label: "building web & mobile apps", art: "time" },
+        { value: "10K+", label: "downloads on FitExGo", art: "downloads" },
+        { value: "3", label: "apps shipped to app stores", art: "apps" },
+        { value: "400+", label: "DSA problems solved", art: "code" },
       ],
       chips: [
         { value: "5", label: "products live right now" },
@@ -58,10 +58,10 @@ export const profile = {
         "Backend engineer with 1+ year of Erlang/OTP: a Kafka-based order processing system with at-least-once delivery, idempotent processing, retries, dead-letter queues and OTP supervision trees, plus XMPP messaging on MongooseIM and a Kazoo/FreeSWITCH VoIP platform.",
       roles: ["Erlang/OTP", "Apache Kafka", "XMPP", "FreeSWITCH"],
       stats: [
-        { value: "~110/s", label: "orders processed end to end" },
-        { value: "84%", label: "test coverage" },
-        { value: "0", label: "Dialyzer warnings" },
-        { value: "400+", label: "DSA problems solved" },
+        { value: "~110/s", label: "orders processed end to end", art: "throughput" },
+        { value: "84%", label: "test coverage", art: "coverage" },
+        { value: "0", label: "Dialyzer warnings", art: "check" },
+        { value: "400+", label: "DSA problems solved", art: "code" },
       ],
       chips: [
         { value: "OTP", label: "supervision trees that restart on crash" },

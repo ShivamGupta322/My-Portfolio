@@ -5,6 +5,7 @@ import { GraduationCap, MapPin, Sparkles } from "lucide-react";
 import { CountUp } from "@/components/motion/CountUp";
 import { Reveal } from "@/components/motion/Reveal";
 import { ScrubWords } from "@/components/motion/ScrubWords";
+import { StatArt } from "@/components/motion/StatArt";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { TechChip } from "@/components/ui/TechChip";
@@ -84,12 +85,18 @@ export function About({ index }: { index: string }) {
           {/* Stats */}
           {copy.stats.map((stat, i) => (
             <div key={`${lens}-${i}`}>
-              <TiltCard className={cn(tile, "flex min-h-40 flex-col justify-between gap-6")}>
+              <TiltCard
+                className={cn(
+                  tile,
+                  "relative flex min-h-40 flex-col justify-between gap-6 overflow-hidden",
+                )}
+              >
+                {stat.art && <StatArt kind={stat.art} />}
                 <CountUp
                   value={stat.value}
-                  className="font-mono text-[clamp(2.25rem,2.6vw+0.75rem,3.25rem)] leading-none font-semibold tracking-[-0.02em] whitespace-nowrap text-gradient tabular-nums"
+                  className="relative font-mono text-[clamp(2.25rem,2.6vw+0.75rem,3.25rem)] leading-none font-semibold tracking-[-0.02em] whitespace-nowrap text-gradient tabular-nums"
                 />
-                <p className="text-small text-muted">{stat.label}</p>
+                <p className="relative text-small text-muted">{stat.label}</p>
               </TiltCard>
             </div>
           ))}

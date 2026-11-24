@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { getImageProps } from "next/image";
-import { useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { preload } from "react-dom";
 import {
   AnimatePresence,
@@ -10,7 +10,7 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { ArrowDown, Cpu, Smartphone } from "lucide-react";
+import { ArrowDown, Cpu, MousePointerClick, Smartphone } from "lucide-react";
 import { LazyMount } from "@/components/motion/LazyMount";
 import { TechChip } from "@/components/ui/TechChip";
 import { useIsDesktop, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
@@ -172,6 +172,7 @@ export function ProjectStage({
       const scrollable = el.offsetHeight - window.innerHeight;
       scrollTo(top + ((i + 0.5) / steps) * scrollable, { offset: 0 });
     } else {
+      setAutoplay(false); // the visitor took over
       stepRef.current = i;
       setStep(i);
     }
@@ -179,12 +180,31 @@ export function ProjectStage({
 
   const showDiagram = isBackend || (underHood && diagram);
 
+  /* Stages that don't follow the scroll play their steps on their own while in
+     view (paused on hover, stopped for good once a step is picked), and say how
+     to switch steps by hand. */
+  const [autoplay, setAutoplay] = useState(true);
+  const [hovered, setHovered] = useState(false);
+  const playing =
+    !scrollDriven && autoplay && active && !hovered && !reducedMotion && !showDiagram && steps > 1;
+  useEffect(() => {
+    if (!playing) return;
+    const id = window.setTimeout(() => {
+      const next = (stepRef.current + 1) % steps;
+      stepRef.current = next;
+      setStep(next);
+    }, AUTOPLAY_MS);
+    return () => window.clearTimeout(id);
+  }, [playing, step, steps]);
+
   return (
     <section
       ref={ref}
       id={anchor}
       aria-labelledby={`${anchor}-title`}
-      style={{ "--steps": steps } as CSSProperties}
+      style={{ "--steps": steps, "--autoplay-ms": `${AUTOPLAY_MS}ms` } as CSSProperties}
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
       className={cn(
         "relative",
         pinned && "motion-safe:lg:h-[calc(var(--steps)*45svh+100svh)]",
@@ -227,7 +247,20 @@ export function ProjectStage({
             </div>
 
             <div className="order-3">
-            <ol className="space-y-0.5 lg:mt-6" aria-label={`${project.title} highlights`}>
+            {!scrollDriven && steps > 1 && (
+              <p className="mb-3 flex items-center gap-2 font-mono text-label text-muted uppercase lg:mt-6">
+                <MousePointerClick aria-hidden className="size-3.5 text-primary-text" />
+                <span>
+                  <span className="lg:hidden">Tap</span>
+                  <span className="max-lg:hidden">Click</span> a step to see it
+                </span>
+                {playing && <span className="text-fg/60">· auto-playing</span>}
+              </p>
+            )}
+            <ol
+              className={cn("space-y-0.5", scrollDriven && "lg:mt-6")}
+              aria-label={`${project.title} highlights`}
+            >
               {project.highlights.map((h, i) => {
                 const on = i === step;
                 return (
@@ -241,10 +274,15 @@ export function ProjectStage({
                       <span
                         aria-hidden
                         className={cn(
-                          "absolute top-2.5 bottom-2.5 left-0 w-0.5 rounded-full transition-colors duration-300",
-                          on ? "bg-brand" : "bg-glass-border",
+                          "absolute top-2.5 bottom-2.5 left-0 w-0.5 overflow-hidden rounded-full transition-colors duration-300",
+                          on && !playing ? "bg-brand" : "bg-glass-border",
                         )}
-                      />
+                      >
+                        {/* while auto-playing, the active bar fills up until the next step */}
+                        {on && playing && (
+                          <span key={step} className="absolute inset-0 origin-top bg-brand stage-progress" />
+                        )}
+                      </span>
                       <span
                         className={cn(
                           "block font-display text-[1.0625rem] font-semibold transition-colors duration-300",
@@ -406,6 +444,8 @@ export function ProjectStage({
     </section>
   );
 }
+
+const AUTOPLAY_MS = 4000;
 
 /* ============================== Visuals ============================== */
 

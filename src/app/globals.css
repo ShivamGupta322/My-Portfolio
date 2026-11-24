@@ -300,6 +300,11 @@
     color: var(--c-fg);
     scroll-padding-top: var(--nav-offset);
     -webkit-tap-highlight-color: transparent;
+    /* No page scrollbar: the gradient progress bar under the nav shows position. */
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
   }
   body {
     font-family: var(--font-sans);
@@ -368,6 +373,48 @@
   animation: skeleton-sweep 1.4s ease-in-out infinite;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
+  }
+}
+
+/* About tile illustrations (StatArt) */
+@keyframes bar-rise {
+  from {
+    transform: scaleY(0.55);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes lane {
+  from {
+    left: -8%;
+  }
+  to {
+    left: 104%;
+  }
+}
+
+@keyframes ring-draw {
+  from {
+    stroke-dasharray: 20 100;
+  }
+  to {
+    stroke-dasharray: 84 100;
+  }
+}
+
+/* Auto-playing project stage: the active step's bar fills over --autoplay-ms. */
+@utility stage-progress {
+  animation: stage-progress var(--autoplay-ms, 4s) linear forwards;
+}
+
+@keyframes stage-progress {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
   }
 }
 

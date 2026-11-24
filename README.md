@@ -100,6 +100,7 @@ Then open http://localhost:3000.
 | `CONTACT_TO_EMAIL` | with Resend | Inbox that receives messages |
 | `CONTACT_FROM_EMAIL` | optional | Verified sender, e.g. `Portfolio <hello@devshivam.online>`. Defaults to Resend's test sender, which only delivers to your Resend account's own email. |
 | `NEXT_PUBLIC_SITE_URL` | yes | Canonical URLs and OG images |
+| `GITHUB_TOKEN` | optional | Higher GitHub API limit for the "On GitHub" card (no scopes needed). Works without it. |
 
 ## Project structure
 

@@ -34,6 +34,9 @@ export interface Metric {
   label: string;
 }
 
+/** Which little looping illustration sits behind an About stat tile. */
+export type StatArt = "time" | "downloads" | "apps" | "code" | "throughput" | "coverage" | "check";
+
 export interface Highlight {
   title: string;
   body: string;
@@ -166,7 +169,7 @@ export interface Profile {
       tagline: string;
       summary: string;
       roles: readonly string[];
-      stats: readonly Metric[];
+      stats: readonly (Metric & { art?: StatArt })[];
       /** Two short identity chips floating by the hero portrait (not repeats of `stats`). */
       chips: readonly [Metric, Metric];
     }

@@ -1,12 +1,28 @@
+import { Suspense } from "react";
 import { ArrowUpRight, Award, Code2 } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
+import { TechGlobe, type GlobeTech } from "@/components/motion/TechGlobe";
 import { BrandIcon } from "@/components/ui/BrandIcon";
 import { LensScope } from "@/components/ui/LensScope";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { achievements } from "@/content/achievements";
+import { profile } from "@/content/profile";
 import { skillGroups } from "@/content/skills";
-import { iconPath } from "@/lib/icons";
+import { iconColor, iconPath } from "@/lib/icons";
 import type { Lens } from "@/types/content";
+import { GitHubActivity } from "./GitHubActivity";
+
+/** Logos on the globe: the languages and tools people look for first. */
+const GLOBE = [
+  "JavaScript", "TypeScript", "React", "React Native", "Next.js", "Vue.js", "Node.js",
+  "Express.js", "Tailwind CSS", "Redux", "Vite", "Erlang", "Apache Kafka", "XMPP",
+  "PostgreSQL", "MongoDB", "Redis", "MySQL", "Docker", "AWS", "Nginx", "Git", "Firebase",
+  "Electron", "Prometheus", "C++", "Python", "Linux",
+];
+
+const githubUser =
+  profile.socials.find((s) => s.label === "GitHub")?.href.split("/").filter(Boolean).pop() ??
+  "ShivamGupta322";
 
 const lensLabel = { product: "Product", systems: "Systems" } as const;
 
@@ -26,6 +42,15 @@ export function Skills({ index }: { index: string }) {
 
   const total = new Set(groups.flatMap((g) => g.items.map((s) => s.name))).size;
 
+  const iconOf = new Map<string, string | undefined>();
+  for (const g of skillGroups)
+    for (const s of g.items as readonly { name: string; icon?: string }[]) iconOf.set(s.name, s.icon);
+  const globe: GlobeTech[] = GLOBE.flatMap((name) => {
+    const slug = iconOf.get(name);
+    const path = iconPath(slug);
+    return path ? [{ name, path, color: iconColor(slug) }] : [];
+  });
+
   return (
     <section
       id="skills"
@@ -36,7 +61,7 @@ export function Skills({ index }: { index: string }) {
         aria-hidden
         className="pointer-events-none absolute top-1/4 left-[-15%] -z-10 size-[520px] rounded-full bg-accent/10 blur-[130px]"
       />
-      <div className="container-page">
+      <div className="container-page grid items-center gap-8 lg:grid-cols-[1fr_minmax(0,30rem)] lg:gap-12">
         <Reveal>
           <SectionHeading
             id="skills-title"
@@ -47,6 +72,7 @@ export function Skills({ index }: { index: string }) {
             intro={`${total} tools across web, mobile, backend and Erlang/OTP. Groups that match the lens you picked come first.`}
           />
         </Reveal>
+        <TechGlobe techs={globe} className="mx-auto max-w-[min(30rem,88vw)]" />
       </div>
 
       <LensScope className="container-page mt-12">
@@ -123,6 +149,11 @@ export function Skills({ index }: { index: string }) {
             </div>
           ))}
         </Reveal>
+        <Suspense fallback={null}>
+          <Reveal className="mt-4">
+            <GitHubActivity username={githubUser} />
+          </Reveal>
+        </Suspense>
       </div>
     </section>
   );

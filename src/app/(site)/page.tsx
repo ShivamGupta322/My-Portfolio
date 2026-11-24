@@ -1,3 +1,4 @@
+import { CrossTapes } from "@/components/motion/CrossTapes";
 import { About } from "@/components/sections/About";
 import { Contact } from "@/components/sections/Contact";
 import { Experience } from "@/components/sections/Experience";
@@ -17,6 +18,7 @@ export default function Home() {
       <About index={indexOf("about")} />
       <Experience index={indexOf("experience")} />
       <Work index={indexOf("work")} />
+      <CrossTapes />
       <Skills index={indexOf("skills")} />
       <Contact index={indexOf("contact")} />
     </>
