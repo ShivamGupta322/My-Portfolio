@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { ArrowUpRight, Award, Code2 } from "lucide-react";
+import { CountUp } from "@/components/motion/CountUp";
 import { Reveal } from "@/components/motion/Reveal";
 import { TechGlobe, type GlobeTech } from "@/components/motion/TechGlobe";
 import { BrandIcon } from "@/components/ui/BrandIcon";
@@ -125,7 +126,10 @@ export function Skills({ index }: { index: string }) {
               key={a.id}
               className="glass-gradient flex h-full flex-col rounded-xl p-7 shadow-none glass"
             >
-              <p className="font-mono text-metric tabular-nums">{a.value}</p>
+              {/* counts up from 0 when it scrolls into view, like the About stats */}
+              <p className="font-mono text-metric tabular-nums">
+                <CountUp value={a.value} />
+              </p>
               <p className="mt-3 text-h4">{a.title}</p>
               <p className="mt-1.5 text-muted">{a.description}</p>
               {"links" in a && (
