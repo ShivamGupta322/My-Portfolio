@@ -58,9 +58,6 @@ portfolio-new/
 │  ├─ DESIGN_SYSTEM.md
 │  └─ MOTION_AND_SHOWCASE.md
 ├─ public/
-│  ├─ resume/
-│  │  ├─ Shivam_Gupta_FullStack.pdf
-│  │  └─ Shivam_Gupta_Erlang.pdf
 │  ├─ projects/<slug>/                  # cover.avif, screens/*.avif, full-page.avif, clips/*.mp4
 │  ├─ archive/                          # old college-project screenshots
 │  ├─ devices/                          # store badges, optional device textures
@@ -90,7 +87,7 @@ portfolio-new/
 │  │  └─ ui/            Button, Badge, TechChip, SectionHeading, GlassCard, LensToggle,
 │  │                    ThemeToggle, FilterChips, Lightbox, Toast
 │  ├─ content/
-│  │  ├─ profile.ts     # name, roles, taglines per lens, socials, resume paths
+│  │  ├─ profile.ts     # name, roles, taglines per lens, socials, resume links
 │  │  ├─ experience.ts  # companies → roles → products
 │  │  ├─ projects.ts    # all projects (typed), featured order per lens
 │  │  ├─ skills.ts      # grouped skills with lens tags + simple-icons slugs
@@ -287,6 +284,6 @@ NEXT_PUBLIC_SITE_URL=https://www.devshivam.online
 - [ ] **Desktop captures** (hero + full-page): Fitizen website, Vela Meet (app + admin panel), Wingtrill site, Social Media Scheduler
 - [ ] Optional **short screen recordings**: Fitizen reels and chat, Vela Meet joining a call
 - [ ] **Profile photo** (transparent cut-out preferred; the old `profile-pic.png` works as a fallback)
-- [ ] Both **resume PDFs** for `public/resume/`
+- [x] Both **resume PDFs** (linked from Google Drive)
 - [ ] Permission or NDA check for showing company products (Scramble Apps, Shivsys). Private backend systems are shown only as diagrams and metrics.
 - [ ] **Resend API key** + verified sender domain (optional; the mailto fallback otherwise)

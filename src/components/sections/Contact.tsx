@@ -111,8 +111,6 @@ export function Contact({ index }: { index: string }) {
                   <a
                     key={r.href}
                     href={r.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="inline-flex h-10 items-center gap-2 rounded-full border border-glass-border bg-glass px-4 text-small font-medium transition-colors hover:border-fg/30 hover:bg-glass-strong"
                   >
                     <Download aria-hidden className="size-3.5 text-primary-text" /> {r.label}

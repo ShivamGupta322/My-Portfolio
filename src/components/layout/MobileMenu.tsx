@@ -128,8 +128,6 @@ export function MobileMenu({
           >
             <a
               href={site.resume.fullStack}
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-primary-strong px-6 font-semibold text-white"
             >
               <Download aria-hidden className="size-[1.125em]" /> Download resume

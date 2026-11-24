@@ -103,6 +103,7 @@ export function Nav() {
             <ButtonLink
               href={site.resume.fullStack}
               external
+              target="_self"
               size="md"
               className="hidden sm:inline-flex"
             >

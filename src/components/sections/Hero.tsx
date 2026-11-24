@@ -155,8 +155,6 @@ export function Hero() {
             <Magnetic>
               <a
                 href={resume.href}
-                target="_blank"
-                rel="noopener noreferrer"
                 className={buttonVariants({ variant: "glass", size: "lg" })}
               >
                 <Download aria-hidden /> Resume · {resume.label}

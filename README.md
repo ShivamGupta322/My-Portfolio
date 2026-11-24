@@ -57,7 +57,7 @@
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Stack rationale, folder structure, content model, rendering, animation plumbing, budgets, build phases |
 | [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | Colors (dark and light, contrast-checked), typography, spacing, glass and neumorphism recipes, components |
 | [docs/MOTION_AND_SHOWCASE.md](docs/MOTION_AND_SHOWCASE.md) | Motion tokens, per-section animation map, how mobile, web, hybrid and backend projects are showcased |
-| [docs/SETUP_MEDIA_AND_EMAIL.md](docs/SETUP_MEDIA_AND_EMAIL.md) | **Before launch:** where to drop project screenshots and resumes, and how to connect contact-form email (Resend) |
+| [docs/SETUP_MEDIA_AND_EMAIL.md](docs/SETUP_MEDIA_AND_EMAIL.md) | **Before launch:** where to drop project screenshots, how resumes are linked, and how to connect contact-form email (Resend) |
 | [design-system/shivam-gupta-portfolio/MASTER.md](design-system/shivam-gupta-portfolio/MASTER.md) | Design rules in the format the `ui-ux-pro-max` skill reads |
 
 ## Getting started
@@ -115,7 +115,7 @@ src/
 ├─ content/        profile, experience, projects, skills, achievements, diagrams, case-studies
 ├─ providers/      Lens, SmoothScroll
 ├─ hooks/ · lib/ · types/
-public/            resume PDFs, project media, archive screenshots, textures
+public/            project media, archive screenshots, textures
 ```
 
 Full tree: [ARCHITECTURE.md §3](docs/ARCHITECTURE.md#3-folder-structure).
@@ -134,7 +134,7 @@ All content is typed data, so you never have to touch components to update it.
 - **Backend project:** add its nodes and edges to `src/content/diagrams.ts` and link it via `architecture`.
 - **Case-study write-up:** every project gets `/projects/<slug>` automatically. For a long-form "The story" section, add `src/content/case-studies/<slug>.mdx` and register it in `src/lib/caseStudies.ts`.
 - **Skills:** edit `src/content/skills.ts`. Icons are `simple-icons` slugs.
-- **Resume:** replace the PDFs in `public/resume/`.
+- **Resume:** both PDFs live in Google Drive; links are in `src/content/profile.ts` → `resume` ([how to update](docs/SETUP_MEDIA_AND_EMAIL.md#2-resumes)).
 
 TypeScript fails the build if a required field is missing, and `npm run check:content` catches broken cross-references (unknown stack names, diagram ids, experience slugs, missing images). Run `npm run check:links` before deploying.
 

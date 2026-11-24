@@ -65,14 +65,18 @@ It prints a table of every project's images (phone and desktop screen counts, co
 
 ## 2. Resumes
 
-Put the two PDFs here (the names must match exactly):
+Both resumes are served from **Google Drive** (shared "Anyone with the link"), set in `src/content/profile.ts` → `resume`. Links use Drive's direct-download form, so clicking downloads the PDF without leaving the site:
 
 ```
-public/resume/Shivam_Gupta_FullStack.pdf
-public/resume/Shivam_Gupta_Erlang.pdf
+https://drive.google.com/uc?export=download&id=<file id>
 ```
 
-They're linked from the nav, hero, contact section and footer. Both include your phone number; they become public once deployed, so remove it first if you'd rather not publish it.
+The file id is the part between `/d/` and `/view` in a Drive share link.
+
+- **Updating a resume:** in Drive, right-click the file → **File information → Manage versions → Upload new version**. The link stays the same, so no code change is needed. (Uploading a new file instead gives a new id; paste it into `profile.ts`.)
+- Keep sharing on "Anyone with the link", or visitors get a Google sign-in page.
+- `npm run check:links` confirms both links still download.
+- They're linked from the nav, hero, mobile menu, contact section and footer.
 
 ---
 

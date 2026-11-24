@@ -17,9 +17,17 @@ export const profile = {
     { label: "LeetCode", href: "https://leetcode.com/u/Shivam_Gupta322/" },
     { label: "GeeksforGeeks", href: "https://www.geeksforgeeks.org/user/guptashivamsg02/" },
   ],
+  // Google Drive direct-download links (the files are shared "Anyone with the link").
+  // To update a resume, replace the file in Drive (Manage versions keeps the same link).
   resume: {
-    product: { label: "Full Stack & Mobile", href: "/resume/Shivam_Gupta_FullStack.pdf" },
-    systems: { label: "Erlang/OTP Backend", href: "/resume/Shivam_Gupta_Erlang.pdf" },
+    product: {
+      label: "Full Stack & Mobile",
+      href: "https://drive.google.com/uc?export=download&id=1toWqeI_IPJXPAlX1IvRsqirqvt3tALQv",
+    },
+    systems: {
+      label: "Erlang/OTP Backend",
+      href: "https://drive.google.com/uc?export=download&id=1tiNz9BFvQ8TbtaP9W54Z2MW9wYcFT28_",
+    },
   },
   lens: {
     product: {

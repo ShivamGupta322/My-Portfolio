@@ -136,11 +136,6 @@ for (const d of diagrams) {
 /* ---------- local assets ---------- */
 const localAssets: { owner: string; path: string; userSupplied?: boolean }[] = [
   ...archive.map((a) => ({ owner: `archive/${a.slug}`, path: a.image })),
-  ...Object.values(profile.resume).map((r) => ({
-    owner: "profile.resume",
-    path: r.href,
-    userSupplied: true,
-  })),
   ...projects.flatMap((p) => {
     const m = p.media as Record<string, string | string[] | undefined>;
     return Object.values(m)
@@ -157,6 +152,7 @@ for (const asset of localAssets) {
 /* ---------- external links ---------- */
 const externalLinks = [
   ...profile.socials.map((s) => ({ owner: `social/${s.label}`, url: s.href })),
+  ...Object.entries(profile.resume).map(([lens, r]) => ({ owner: `resume/${lens}`, url: r.href })),
   ...projects.flatMap((p) =>
     Object.entries(p.links).map(([k, url]) => ({ owner: `${p.slug}.${k}`, url: url as string })),
   ),

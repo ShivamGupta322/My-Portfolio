@@ -79,15 +79,17 @@ export async function sendContact(_prev: ContactState, formData: FormData): Prom
   }
 
   // 4. Not configured yet: hand the visitor a ready-to-send email instead.
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO_EMAIL;
+  // Empty values count as unset (.env.example ships the keys with no values).
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const to = process.env.CONTACT_TO_EMAIL?.trim();
+  const from = process.env.CONTACT_FROM_EMAIL?.trim() || "Portfolio <onboarding@resend.dev>";
   if (!apiKey || !to) return { status: "unavailable", mailto: mailtoFor(parsed.data) };
 
   // 5. Send.
   const { name, email, message } = parsed.data;
   try {
     const { error } = await new Resend(apiKey).emails.send({
-      from: process.env.CONTACT_FROM_EMAIL ?? "Portfolio <onboarding@resend.dev>",
+      from,
       to,
       replyTo: email,
       subject: `Portfolio: message from ${name}`,

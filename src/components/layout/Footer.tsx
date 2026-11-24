@@ -98,8 +98,6 @@ export function Footer() {
             <li>
               <a
                 href={site.resume.fullStack}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-fg/85 transition-colors hover:text-fg"
               >
                 Full Stack &amp; Mobile
@@ -108,8 +106,6 @@ export function Footer() {
             <li>
               <a
                 href={site.resume.erlang}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="text-fg/85 transition-colors hover:text-fg"
               >
                 Erlang/OTP Backend
