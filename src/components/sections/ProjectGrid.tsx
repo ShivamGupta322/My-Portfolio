@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import dynamic from "next/dynamic";
+import { useState, type ComponentType } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LazyMount } from "@/components/motion/LazyMount";
 import { TiltCard } from "@/components/motion/TiltCard";
@@ -28,6 +29,24 @@ import {
   type KindFilter,
   type ProjectView,
 } from "@/lib/projectView";
+
+/* Faux product scenes for the backend cards (Stageshow kit), split into their
+   own chunk and only loaded when a card mounts. */
+const sceneFallback = () => null;
+const BACKEND_SCENES: Record<string, ComponentType> = {
+  "order-processing-system": dynamic(
+    () => import("@/components/stageshow/BackendScenes").then((m) => m.OrderScene),
+    { ssr: false, loading: sceneFallback },
+  ),
+  "voip-telephony": dynamic(
+    () => import("@/components/stageshow/BackendScenes").then((m) => m.CallScene),
+    { ssr: false, loading: sceneFallback },
+  ),
+  nearby: dynamic(
+    () => import("@/components/stageshow/BackendScenes").then((m) => m.NearbyScene),
+    { ssr: false, loading: sceneFallback },
+  ),
+};
 
 const filters = [
   { value: "all", label: "All" },
@@ -219,6 +238,17 @@ function MiniVisual({ project, diagram }: { project: ProjectView; diagram?: Diag
       </>
     );
   }
+
+  const Scene = BACKEND_SCENES[project.slug];
+  if (Scene)
+    return (
+      <>
+        {glow}
+        <div className="absolute inset-0">
+          <Scene />
+        </div>
+      </>
+    );
 
   if (project.kind === "backend" && diagram)
     return (

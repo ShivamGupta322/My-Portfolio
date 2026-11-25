@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored Stageshow kit (MIT, copied from .agents/skills/stageshow/kit): linted upstream.
+    "src/components/stageshow/kit/**",
+    // The skill itself (examples, playground, scripts) is tooling, not app code.
+    ".agents/**",
   ]),
 ]);
 
